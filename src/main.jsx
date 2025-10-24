@@ -8,7 +8,6 @@ import Chess from "./assets/chess.jsx";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-      <TTT />
      <Chess />
   </StrictMode>,
 )

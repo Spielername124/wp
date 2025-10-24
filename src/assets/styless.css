@@ -88,3 +88,13 @@ body {
 .game-info {
     margin-left: 20px;
 }
+
+
+/* Chess board square backgrounds */
+.square--light { background: #eee; }
+.square--dark  { background: #769656; }
+
+/* Chess: only text colors by piece color */
+/* Use clearly distinct colors so the change is visible */
+.square--color-w { color: #649dff; }
+.square--color-b { color: #1b1919; }
