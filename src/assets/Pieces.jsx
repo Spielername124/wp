@@ -67,7 +67,50 @@ const typeSpecificValdiationRules= {
     "T":(currentBoard, lastBoard, movingPiece, newPos)=>{
         return straightLineValidation(currentBoard, movingPiece, newPos);
     },
+    'S':  (currentBoard, lastBoard, movingPiece, newPos)=>{
+        return diagonalLineValidation(currentBoard, movingPiece, newPos);
+    },
+    'D':  (currentBoard, lastBoard, movingPiece, newPos)=>{
+        return diagonalLineValidation(currentBoard, movingPiece, newPos) ||
+            straightLineValidation(currentBoard, movingPiece, newPos);
+    },
 
+
+}
+function diagonalLineValidation(currentBoard, movingPiece, newPos){
+    const movingRow = Math.trunc(movingPiece.currentPos / 8);
+    const movingCol = movingPiece.currentPos % 8;
+    const targetRow = Math.trunc(newPos / 8);
+    const targetCol = newPos % 8;
+    const rowDiff = Math.abs(movingRow-targetRow);
+    const colDiff = Math.abs(movingCol-targetCol);
+
+    const smallerPiece = Math.min(movingPiece.currentPos, newPos);
+    const biggerPiece = Math.max(movingPiece.currentPos, newPos);
+
+    if(rowDiff!==colDiff){return false;}
+
+    if((biggerPiece-smallerPiece)%9===0){
+        const delta = (biggerPiece-smallerPiece)/9;
+        for(let i= 1; i<delta; i++){
+          if(currentBoard[smallerPiece+9*i]!==null){
+              return false;
+          }
+        }
+        return true;
+    }
+    if((biggerPiece-smallerPiece)%7===0){
+        const delta = (biggerPiece-smallerPiece)/7;
+        for(let i= 1; i<delta; i++){
+            if(currentBoard[smallerPiece+7*i]!==null){
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    return false;
 }
 function straightLineValidation(currentBoard, movingPiece, newPos){
     const movingRow = Math.trunc(movingPiece.currentPos / 8);
