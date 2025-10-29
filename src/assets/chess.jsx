@@ -1,6 +1,6 @@
 import {useState} from "react";
 import * as Pieces from "./Pieces.jsx";
-import {isEnPassant, piece} from "./Pieces.jsx";
+import {isEnPassant, piece, validatingLegalityController} from "./Pieces.jsx";
 
 /*
 
@@ -49,18 +49,27 @@ export default function Game(){
     const currentSquares = history[currentMove];
     const isNext = currentMove % 2 === 0;
     const isNotHistory = currentMove === history.length - 1;
-    const [badges, setBadges] = useState(() => Array(64).fill(null))
+    const [badges, setBadges] = useState(() => Array(64).fill(null));
+
+    function setBadge(index, text){
+        setBadges(prev => {
+            const copy = prev.slice();
+            copy[index] = text ?? null;
+            return copy;
+        });
+    }
+    function resetBadges(){
+        setBadges(prev => {
+            return Array(64).fill(null);
+        });
+    }
+
 
     function handlePlay(nextSquares){
         const nextHistory =  [...history.slice(0, currentMove + 1),nextSquares];
         setHistory(nextHistory);
         setCurrentMove(nextHistory.length - 1);
 
-    }
-    function setBadge(number, text){
-        const nextBadges = badges.slice();
-        nextBadges[number] = text??null;
-        setBadges(nextBadges);
     }
 
     function jumpTo(nextMove) {
@@ -83,15 +92,22 @@ export default function Game(){
     return  (
         <div className="game">
             <div className="game-board">
-                <Board isNext={isNext}
-                       squares={currentSquares}
-                       lastSquares={lastSquares}
-                       onPlay={handlePlay}
-                       chosenPiece={null}
-                       readOnly={!isNotHistory}
-                       badges={badges}
-                       setBadge={setBadge}
-                />
+                <div className="board-overlay-wrap">
+                    <Board isNext={isNext}
+                           squares={currentSquares}
+                           lastSquares={lastSquares}
+                           onPlay={handlePlay}
+                           readOnly={!isNotHistory}
+                           setBadge={setBadge}
+                           resetBadges={resetBadges}
+                    />
+
+                    <div className="badges-layer">
+                        {Array.from({ length: 64 }, (_, idx) => (
+                            <span key={idx} className="badge">{badges[idx] ?? ''}</span>
+                        ))}
+                    </div>
+                </div>
             </div>
             <div className="game-info">
                 <ol>{moves}</ol>
@@ -120,7 +136,36 @@ function Square({ index, value, onSquareClick }){
 //TODO
 
 
-function Board({isNext, lastSquares, squares, onPlay, chosenPiece, readOnly, badges, setBadge}){
+function Board({isNext, lastSquares, squares, onPlay, readOnly,setBadge,resetBadges}){
+    const[chosenPiece, setChosenPiece] = useState(null);
+
+    function showIndicators(number){
+        const movingRow = Math.trunc(number / 8);
+        const movingCol = number % 8;
+        for(let i=0; i<8; i++){
+            if(validatingLegalityController(squares, lastSquares,squares[number], movingRow*8+i)){
+                setBadge(movingRow*8+i,"X");
+            }
+            if(validatingLegalityController(squares, lastSquares,squares[number],movingCol+8*i)){
+                setBadge(movingCol+8*i,"X");
+            }
+            if(validatingLegalityController(squares, lastSquares,squares[number],number+7)){
+                setBadge(number+7,"X");
+            }
+            if(validatingLegalityController(squares, lastSquares,squares[number],number-7)){
+                setBadge(number-7,"X");
+            }
+            if(validatingLegalityController(squares, lastSquares,squares[number],number+9)){
+                setBadge(number+9,"X");
+            }
+            if(validatingLegalityController(squares, lastSquares,squares[number],number-9)){
+                setBadge(number-9,"X");
+            }
+
+            //TODO: ADD HORSEY CHECK
+        }
+    }
+
     function handleClick(number){
         if(readOnly)return;
         const nextSquares = squares.slice();
@@ -128,34 +173,39 @@ function Board({isNext, lastSquares, squares, onPlay, chosenPiece, readOnly, bad
             return;
         }
         if(chosenPiece==null){
-            chosenPiece = squares[number];
-            //setBadge(number, "A");
+            setChosenPiece(number)
+            showIndicators(number);
+            setBadge(number, "A");
+            return;
         }
-        else if(chosenPiece===squares[number]){
-            chosenPiece = null;
-            //setBadge(number, null);
+        else if(chosenPiece===number){
+            setChosenPiece(null);
+            resetBadges();
+            return;
         }
-        else if(Pieces.validatingLegalityController(nextSquares, lastSquares, chosenPiece, number)){
-            if(chosenPiece.type==='B' && isEnPassant(nextSquares, lastSquares, chosenPiece, number)){
-                if(chosenPiece.color==='w'){
+        else if(Pieces.validatingLegalityController(nextSquares, lastSquares, squares[chosenPiece], number)){
+            if(chosenPiece.type==='B' && isEnPassant(nextSquares, lastSquares, squares[chosenPiece], number)){
+                if(squares[chosenPiece].color==='w'){
                     nextSquares[number+8] = null;
                 }
                 else{
                     nextSquares[number-8] = null;
                 }
             }
-            nextSquares[number] = Pieces.piece(chosenPiece.type, chosenPiece.color, number, false);
-            nextSquares[chosenPiece.currentPos] = null;
-            chosenPiece = null;
+            nextSquares[number] = Pieces.piece(squares[chosenPiece].type, squares[chosenPiece].color, number, false);
+            nextSquares[squares[chosenPiece].currentPos] = null;
+            resetBadges();
+            setChosenPiece(null);
             onPlay(nextSquares);}
         else{
-            chosenPiece = null;
+            setChosenPiece(null);
+            resetBadges();
         }
 
     }
 
     return(
-        <div className="board-overlay-wrap">
+        <>
             {Array.from({length: 8}, (_, i) => (
                 <div key={i} className="board-row">
                     {Array.from({length: 8}, (_, j) => (
@@ -168,12 +218,6 @@ function Board({isNext, lastSquares, squares, onPlay, chosenPiece, readOnly, bad
                     ))}
                 </div>
             ))}
-
-            <div className="badges-layer">
-                {Array.from({ length: 64 }, (_, idx) => (
-                    <span key={idx} className="badge">{badges[idx] ?? ''}</span>
-                ))}
-            </div>
-        </div>
+        </>
     );
 }

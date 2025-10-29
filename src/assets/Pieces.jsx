@@ -14,6 +14,7 @@ export function validatingLegalityController (currentBoard, lastBoard, movingPie
         (currentBoard[newPos]!=null && currentBoard[newPos].color===movingPiece.color)){
         return false;
     }
+    if(newPos>=64)return false;
     const typeSpecificValidation = typeSpecificValdiationRules[movingPiece.type];
         if(typeSpecificValidation){
             return typeSpecificValidation(currentBoard, lastBoard, movingPiece, newPos);
