@@ -14,14 +14,6 @@ k=könig
 
 */
 
-function deepFreezeBoard(board){
-    board.forEach(cell => {
-        if (cell && typeof cell === 'object') {
-            Object.freeze(cell);
-        }
-    });
-    return Object.freeze(board);
-}
 
 function Restart(){
     const initial = Array(64).fill(null);
@@ -48,7 +40,7 @@ function Restart(){
     initial[62]=Pieces.piece('P', 'w',62,false);
     initial[63]=Pieces.piece('T', 'w',63,true);
 
-    return deepFreezeBoard(initial);
+    return initial
 }
 export default function Game(){
     const [history, setHistory] = useState(()=> [Restart()]);
@@ -57,14 +49,20 @@ export default function Game(){
     const currentSquares = history[currentMove];
     const isNext = currentMove % 2 === 0;
     const isNotHistory = currentMove === history.length - 1;
+    const [badges, setBadges] = useState(() => Array(64).fill(null))
 
     function handlePlay(nextSquares){
-        const frozen = deepFreezeBoard(nextSquares);
-        const nextHistory =  [...history.slice(0, currentMove + 1), frozen];
+        const nextHistory =  [...history.slice(0, currentMove + 1),nextSquares];
         setHistory(nextHistory);
         setCurrentMove(nextHistory.length - 1);
 
     }
+    function setBadge(number, text){
+        const nextBadges = badges.slice();
+        nextBadges[number] = text??null;
+        setBadges(nextBadges);
+    }
+
     function jumpTo(nextMove) {
         setCurrentMove(nextMove);
     }
@@ -85,7 +83,15 @@ export default function Game(){
     return  (
         <div className="game">
             <div className="game-board">
-                <Board isNext={isNext} squares={currentSquares} lastSquares={lastSquares} onPlay={handlePlay} chosenPiece={null} readOnly={!isNotHistory} />
+                <Board isNext={isNext}
+                       squares={currentSquares}
+                       lastSquares={lastSquares}
+                       onPlay={handlePlay}
+                       chosenPiece={null}
+                       readOnly={!isNotHistory}
+                       badges={badges}
+                       setBadge={setBadge}
+                />
             </div>
             <div className="game-info">
                 <ol>{moves}</ol>
@@ -97,7 +103,6 @@ function Square({ index, value, onSquareClick }){
     const row = Math.floor(index / 8);
     const col = index % 8;
     const isDark = (row + col) % 2 === 1;
-
     const classNames = [
         'square',
         isDark ? 'square--dark' : 'square--light',
@@ -115,7 +120,7 @@ function Square({ index, value, onSquareClick }){
 //TODO
 
 
-function Board({isNext, lastSquares, squares, onPlay, chosenPiece, readOnly}){
+function Board({isNext, lastSquares, squares, onPlay, chosenPiece, readOnly, badges, setBadge}){
     function handleClick(number){
         if(readOnly)return;
         const nextSquares = squares.slice();
@@ -124,9 +129,11 @@ function Board({isNext, lastSquares, squares, onPlay, chosenPiece, readOnly}){
         }
         if(chosenPiece==null){
             chosenPiece = squares[number];
+            //setBadge(number, "A");
         }
-        else if(chosenPiece==squares[number]){
+        else if(chosenPiece===squares[number]){
             chosenPiece = null;
+            //setBadge(number, null);
         }
         else if(Pieces.validatingLegalityController(nextSquares, lastSquares, chosenPiece, number)){
             if(chosenPiece.type==='B' && isEnPassant(nextSquares, lastSquares, chosenPiece, number)){
@@ -148,20 +155,25 @@ function Board({isNext, lastSquares, squares, onPlay, chosenPiece, readOnly}){
     }
 
     return(
-        <>
-            <div>  </div>
+        <div className="board-overlay-wrap">
             {Array.from({length: 8}, (_, i) => (
-            <div key={i} className="board-row">
-                {Array.from({length: 8}, (_, j) => (
-                    <Square
-                        key={j}
-                        index={i * 8 + j}
-                        value={squares[i * 8 + j]}
-                        onSquareClick={() => handleClick(i * 8 + j)}
-                    />
+                <div key={i} className="board-row">
+                    {Array.from({length: 8}, (_, j) => (
+                        <Square
+                            key={j}
+                            index={i * 8 + j}
+                            value={squares[i * 8 + j]}
+                            onSquareClick={() => handleClick(i * 8 + j)}
+                        />
+                    ))}
+                </div>
+            ))}
+
+            <div className="badges-layer">
+                {Array.from({ length: 64 }, (_, idx) => (
+                    <span key={idx} className="badge">{badges[idx] ?? ''}</span>
                 ))}
             </div>
-            ))}
-        </>
+        </div>
     );
 }

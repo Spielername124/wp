@@ -98,3 +98,36 @@ body {
 /* Use clearly distinct colors so the change is visible */
 .square--color-w { color: #649dff; }
 .square--color-b { color: #1b1919; }
+
+/* Semi-transparent overlay over all buttons while keeping them clickable */
+button {
+    position: relative;           /* Create a containing block for the pseudo-element */
+    overflow: hidden;             /* Keep the overlay inside the button bounds */
+}
+
+
+/* Badge overlay now rendered in a separate grid layer; legacy square pseudo-elements removed */
+
+/* Wrapper: board + overlay stacked */
+.board-overlay-wrap { position: relative; display: inline-block; }
+
+/* Overlay: 8×8 grid matching .square size (34px) */
+.badges-layer {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(8, 34px);
+  grid-auto-rows: 34px;
+  pointer-events: none; /* do not block clicks to squares */
+  z-index: 1;
+}
+
+/* A single badge fills its grid cell and centers text */
+.badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+}
