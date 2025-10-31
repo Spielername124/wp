@@ -1,19 +1,6 @@
 import {useState} from "react";
 import * as Pieces from "./Pieces.jsx";
-import {isEnPassant, piece, validatingLegalityController} from "./Pieces.jsx";
-
-/*
-
-P=Horsey
-b=bauer
-t=turm
-s=springer
-d=dame
-k=könig
-
-
-*/
-
+import {Board} from "./Board.jsx";
 
 function Restart(){
     const initial = Array(64).fill(null);
@@ -28,8 +15,8 @@ function Restart(){
     initial[7] = Pieces.piece('T', 'b',7,true);
 
     for(let i=0; i<8; i++){
-        initial[i+8]=Pieces.piece('B', 'b', i+8);
-        initial[i+6*8]=Pieces.piece('B', 'w', i+6*8);
+        initial[i+8]=Pieces.piece('B', 'b', i+8,true);
+        initial[i+6*8]=Pieces.piece('B', 'w', i+6*8,true);
     }
     initial[56]=Pieces.piece('T', 'w',56,true);
     initial[57]=Pieces.piece('P', 'w',57);
@@ -115,91 +102,7 @@ export default function Game(){
         </div>
     );
 }
-function Square({ index, value, onSquareClick }){
-    const row = Math.floor(index / 8);
-    const col = index % 8;
-    const isDark = (row + col) % 2 === 1;
-    const classNames = [
-        'square',
-        isDark ? 'square--dark' : 'square--light',
-        value && value.color ? `square--color-${value.color}` : ''
-    ].join(' ').trim();
-
-    return(
-        <button
-            className={classNames}
-            onClick={onSquareClick}>
-            {value ? value.type : null}
-        </button>
-    )
-}
-//TODO
 
 
-function Board({isNext, lastSquares, squares, onPlay, readOnly,setBadge,resetBadges}){
-    const[chosenPiece, setChosenPiece] = useState(null);
 
-    function showIndicators(number){
-        //TODO: Make more efficient if bored
-        for(let i=0; i<64; i++){
-            if(validatingLegalityController(squares, lastSquares,squares[number], i)){
-                setBadge(i, "X");
-            }
-        }
-    }
 
-    function handleClick(number){
-        if(readOnly)return;
-        const nextSquares = squares.slice();
-        if(squares[number]==null&&chosenPiece==null){
-            return;
-        }
-        if(chosenPiece==null){
-            setChosenPiece(number)
-            showIndicators(number);
-            setBadge(number, "A");
-            return;
-        }
-        else if(chosenPiece===number){
-            setChosenPiece(null);
-            resetBadges();
-            return;
-        }
-        else if(Pieces.validatingLegalityController(nextSquares, lastSquares, squares[chosenPiece], number)){
-            if(lastSquares!== null && (chosenPiece.type==='B' && isEnPassant(nextSquares, lastSquares, squares[chosenPiece], number))){
-                if(squares[chosenPiece].color==='w'){
-                    nextSquares[number+8] = null;
-                }
-                else{
-                    nextSquares[number-8] = null;
-                }
-            }
-            nextSquares[number] = Pieces.piece(squares[chosenPiece].type, squares[chosenPiece].color, number);
-            nextSquares[squares[chosenPiece].currentPos] = null;
-            resetBadges();
-            setChosenPiece(null);
-            onPlay(nextSquares);}
-        else{
-            setChosenPiece(null);
-            resetBadges();
-        }
-
-    }
-
-    return(
-        <>
-            {Array.from({length: 8}, (_, i) => (
-                <div key={i} className="board-row">
-                    {Array.from({length: 8}, (_, j) => (
-                        <Square
-                            key={j}
-                            index={i * 8 + j}
-                            value={squares[i * 8 + j]}
-                            onSquareClick={() => handleClick(i * 8 + j)}
-                        />
-                    ))}
-                </div>
-            ))}
-        </>
-    );
-}
