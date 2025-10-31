@@ -140,26 +140,10 @@ function Board({isNext, lastSquares, squares, onPlay, readOnly,setBadge,resetBad
     const[chosenPiece, setChosenPiece] = useState(null);
 
     function showIndicators(number){
-        const movingRow = Math.trunc(number / 8);
-        const movingCol = number % 8;
-        for(let i=0; i<8; i++){
-            if(validatingLegalityController(squares, lastSquares,squares[number], movingRow*8+i)){
-                setBadge(movingRow*8+i,"X");
-            }
-            if(validatingLegalityController(squares, lastSquares,squares[number],movingCol+8*i)){
-                setBadge(movingCol+8*i,"X");
-            }
-            if(validatingLegalityController(squares, lastSquares,squares[number],number+7)){
-                setBadge(number+7,"X");
-            }
-            if(validatingLegalityController(squares, lastSquares,squares[number],number-7)){
-                setBadge(number-7,"X");
-            }
-            if(validatingLegalityController(squares, lastSquares,squares[number],number+9)){
-                setBadge(number+9,"X");
-            }
-            if(validatingLegalityController(squares, lastSquares,squares[number],number-9)){
-                setBadge(number-9,"X");
+        //TODO: Make more efficient if bored
+        for(let i=0; i<64; i++){
+            if(validatingLegalityController(squares, lastSquares,squares[number], i)){
+                setBadge(i, "X");
             }
 
             //TODO: ADD HORSEY CHECK

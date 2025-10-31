@@ -84,6 +84,18 @@ const typeSpecificValdiationRules= {
         const targetCol = newPos % 8;
         if(Math.abs(movingRow-targetRow)<=1 && Math.abs(movingCol-targetCol)<=1)return true;
         return false;
+    },
+    'P':  (currentBoard, lastBoard, movingPiece, newPos)=>{
+        const movingRow = Math.trunc(movingPiece.currentPos / 8);
+        const targetRow = Math.trunc(newPos / 8);
+        const movingCol = movingPiece.currentPos % 8;
+        const targetCol = newPos % 8;
+        const rowDiff = Math.abs(movingRow-targetRow);
+        const colDiff = Math.abs(movingCol-targetCol);
+        if((rowDiff===2 && colDiff===1) || (rowDiff===1 && colDiff===2) ){
+            return true;
+        }
+        return false;
     }
 
 
