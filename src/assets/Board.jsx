@@ -34,7 +34,7 @@ export function Board({isNext, lastSquares, squares, onPlay, readOnly,setBadge,r
             return;
         }
         else if(Pieces.validatingLegalityController(nextSquares, lastSquares, squares[chosenPiece], number)){
-            if(lastSquares!== null && (chosenPiece.type==='B' && isEnPassant(nextSquares, lastSquares, squares[chosenPiece], number))){
+            if(lastSquares!== null && (squares[chosenPiece].type==='B' && isEnPassant(nextSquares, lastSquares, squares[chosenPiece], number))){
                 if(squares[chosenPiece].color==='w'){
                     nextSquares[number+8] = null;
                 }

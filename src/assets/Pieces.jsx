@@ -2,15 +2,44 @@ export function piece(type, color, currentPos, specialboolean= false){
     return {type, color, currentPos, specialboolean};
 }
 
-function isSchach(currentBoard, color) {
+function searchKing(currentBoard, color){
+    for(let i=0; i<64; i++){
+        if(currentBoard[i]!== null && currentBoard[i].color === color && currentBoard[i].type === 'K')return i;
+    }
+    return null;
+}
+function isSchach(currentBoard, lastBoard, color, checkingNextTurnSchach=false) {
+    const kingPos = searchKing(currentBoard, color);
+    for (let i = 0; i < 64; i++) {
+        if (currentBoard[i] !== null && currentBoard[i].color !== color) {
+            if (validatingLegalityController(currentBoard, lastBoard, currentBoard[i], kingPos, checkingNextTurnSchach)) {
+                return true;
+            }
+        }
+    }
     return false;
 }
-
+function isNextTurnSchach(squares, lastSquares, chosenPiece, number ){
+    const nextSquares=squares.slice();
+    if(validatingLegalityController(nextSquares, lastSquares, squares[chosenPiece], number,true)) {
+        if (lastSquares !== null && (squares[chosenPiece].type === 'B' && isEnPassant(nextSquares, lastSquares, squares[chosenPiece], number))) {
+            if (squares[chosenPiece].color === 'w') {
+                nextSquares[number + 8] = null;
+            } else {
+                nextSquares[number - 8] = null;
+            }
+        }
+        nextSquares[number] = piece(squares[chosenPiece].type, squares[chosenPiece].color, number);
+        nextSquares[squares[chosenPiece].currentPos] = null;
+        return isSchach(nextSquares, squares, squares[chosenPiece].color, true);
+    }
+}
 
 /// ROCHADE INFO: ÜBERSPRINGENDE FELDER NICHT IM SCHACH SEIN
 
-export function validatingLegalityController (currentBoard, lastBoard, movingPiece, newPos){
-    if(newPos===movingPiece.currentPos||isSchach(currentBoard, movingPiece.color) ||
+export function validatingLegalityController (currentBoard, lastBoard, movingPiece, newPos, checkingNextTurnSchach=false){
+    if(newPos===movingPiece.currentPos||
+        (!checkingNextTurnSchach&& isNextTurnSchach(currentBoard, lastBoard, movingPiece.currentPos, newPos))||
         (currentBoard[newPos]!=null && currentBoard[newPos].color===movingPiece.color)){
         return false;
     }
