@@ -25,6 +25,8 @@ export function validatingLegalityController (currentBoard, lastBoard, movingPie
 const typeSpecificValdiationRules= {
     "B":(currentBoard, lastBoard, movingPiece, newPos)=>{
         const enPassant = isEnPassant(currentBoard, lastBoard, movingPiece, newPos);
+        const movingRow = Math.trunc(movingPiece.currentPos / 8);
+        const targetRow = Math.trunc(newPos / 8);
         if(movingPiece.color==='w'){
             if(
                 currentBoard[newPos]===null &&
@@ -32,7 +34,7 @@ const typeSpecificValdiationRules= {
                 return true;
             }
             if(
-                (newPos=== movingPiece.currentPos-7 || newPos=== movingPiece.currentPos-9) &&
+                (movingRow-1===targetRow&&(newPos=== movingPiece.currentPos-7 || newPos=== movingPiece.currentPos-9)) &&
                 ((currentBoard[newPos]===null && enPassant) ||
                     (currentBoard[newPos]!=null &&
                     currentBoard[newPos].color==='b'))
@@ -51,7 +53,7 @@ const typeSpecificValdiationRules= {
                 return true;
             }
             if(
-                (newPos=== movingPiece.currentPos+7 || newPos=== movingPiece.currentPos+9) &&
+                (movingRow+1=== targetRow && (newPos=== movingPiece.currentPos+7 || newPos=== movingPiece.currentPos+9)) &&
                 ((currentBoard[newPos]===null && enPassant) ||
                     (currentBoard[newPos]!=null &&
                         currentBoard[newPos].color==='w'))
