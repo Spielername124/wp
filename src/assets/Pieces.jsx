@@ -10,7 +10,7 @@ function isSchach(currentBoard, color) {
 /// ROCHADE INFO: ÜBERSPRINGENDE FELDER NICHT IM SCHACH SEIN
 
 export function validatingLegalityController (currentBoard, lastBoard, movingPiece, newPos){
-    if(isSchach(currentBoard, movingPiece.color) ||
+    if(newPos==movingPiece.currentPos||isSchach(currentBoard, movingPiece.color) ||
         (currentBoard[newPos]!=null && currentBoard[newPos].color===movingPiece.color)){
         return false;
     }
@@ -77,6 +77,14 @@ const typeSpecificValdiationRules= {
         return diagonalLineValidation(currentBoard, movingPiece, newPos) ||
             straightLineValidation(currentBoard, movingPiece, newPos);
     },
+    'K':  (currentBoard, lastBoard, movingPiece, newPos)=>{
+        const movingRow = Math.trunc(movingPiece.currentPos / 8);
+        const targetRow = Math.trunc(newPos / 8);
+        const movingCol = movingPiece.currentPos % 8;
+        const targetCol = newPos % 8;
+        if(Math.abs(movingRow-targetRow)<=1 && Math.abs(movingCol-targetCol)<=1)return true;
+        return false;
+    }
 
 
 }
