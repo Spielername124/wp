@@ -1,4 +1,4 @@
-export function piece(type, color, currentPos, specialboolean){
+export function piece(type, color, currentPos, specialboolean= false){
     return {type, color, currentPos, specialboolean};
 }
 
@@ -10,7 +10,7 @@ function isSchach(currentBoard, color) {
 /// ROCHADE INFO: ÜBERSPRINGENDE FELDER NICHT IM SCHACH SEIN
 
 export function validatingLegalityController (currentBoard, lastBoard, movingPiece, newPos){
-    if(newPos==movingPiece.currentPos||isSchach(currentBoard, movingPiece.color) ||
+    if(newPos===movingPiece.currentPos||isSchach(currentBoard, movingPiece.color) ||
         (currentBoard[newPos]!=null && currentBoard[newPos].color===movingPiece.color)){
         return false;
     }

@@ -19,25 +19,25 @@ function Restart(){
     const initial = Array(64).fill(null);
 
     initial[0] = Pieces.piece('T', 'b', 0,true);
-    initial[1] = Pieces.piece('P', 'b',1,false);
-    initial[2] = Pieces.piece('S', 'b',2,false);
-    initial[3] = Pieces.piece('D', 'b',3,false);
+    initial[1] = Pieces.piece('P', 'b',1);
+    initial[2] = Pieces.piece('S', 'b',2);
+    initial[3] = Pieces.piece('D', 'b',3);
     initial[4] = Pieces.piece('K', 'b',4,true);
-    initial[5] = Pieces.piece('S', 'b',5,false);
-    initial[6] = Pieces.piece('P', 'b',6,false);
+    initial[5] = Pieces.piece('S', 'b',5);
+    initial[6] = Pieces.piece('P', 'b',6);
     initial[7] = Pieces.piece('T', 'b',7,true);
 
     for(let i=0; i<8; i++){
-        initial[i+8]=Pieces.piece('B', 'b', i+8,true);
-        initial[i+6*8]=Pieces.piece('B', 'w', i+6*8,true);
+        initial[i+8]=Pieces.piece('B', 'b', i+8);
+        initial[i+6*8]=Pieces.piece('B', 'w', i+6*8);
     }
     initial[56]=Pieces.piece('T', 'w',56,true);
-    initial[57]=Pieces.piece('P', 'w',57,false);
-    initial[58]=Pieces.piece('S', 'w',58,false);
-    initial[59]=Pieces.piece('D', 'w',59,false);
+    initial[57]=Pieces.piece('P', 'w',57);
+    initial[58]=Pieces.piece('S', 'w',58);
+    initial[59]=Pieces.piece('D', 'w',59);
     initial[60]=Pieces.piece('K', 'w',60,true);
-    initial[61]=Pieces.piece('S', 'w',61,false);
-    initial[62]=Pieces.piece('P', 'w',62,false);
+    initial[61]=Pieces.piece('S', 'w',61);
+    initial[62]=Pieces.piece('P', 'w',62);
     initial[63]=Pieces.piece('T', 'w',63,true);
 
     return initial
@@ -145,8 +145,6 @@ function Board({isNext, lastSquares, squares, onPlay, readOnly,setBadge,resetBad
             if(validatingLegalityController(squares, lastSquares,squares[number], i)){
                 setBadge(i, "X");
             }
-
-            //TODO: ADD HORSEY CHECK
         }
     }
 
@@ -176,7 +174,7 @@ function Board({isNext, lastSquares, squares, onPlay, readOnly,setBadge,resetBad
                     nextSquares[number-8] = null;
                 }
             }
-            nextSquares[number] = Pieces.piece(squares[chosenPiece].type, squares[chosenPiece].color, number, false);
+            nextSquares[number] = Pieces.piece(squares[chosenPiece].type, squares[chosenPiece].color, number);
             nextSquares[squares[chosenPiece].currentPos] = null;
             resetBadges();
             setChosenPiece(null);
