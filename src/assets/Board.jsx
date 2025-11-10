@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {isEnPassant, validatingLegalityController} from "./Pieces.jsx";
+import {isEnPassant, isRochade, validatingLegalityController} from "./Pieces.jsx";
 import * as Pieces from "./Pieces.jsx";
 import {Square} from "./Square.jsx";
 
@@ -34,12 +34,21 @@ export function Board({isNext, lastSquares, squares, onPlay, readOnly,setBadge,r
             return;
         }
         else if(Pieces.validatingLegalityController(nextSquares, lastSquares, squares[chosenPiece], number)){
-            if(lastSquares!== null && (squares[chosenPiece].type==='B' && isEnPassant(nextSquares, lastSquares, squares[chosenPiece], number))){
-                if(squares[chosenPiece].color==='w'){
-                    nextSquares[number+8] = null;
+            if(lastSquares!== null && (squares[chosenPiece].type==='B' && isEnPassant(nextSquares, lastSquares, squares[chosenPiece], number))) {
+                if (squares[chosenPiece].color === 'w') {
+                    nextSquares[number + 8] = null;
+                } else {
+                    nextSquares[number - 8] = null;
                 }
-                else{
-                    nextSquares[number-8] = null;
+            }
+            if(squares[chosenPiece].type==='K'){
+                if(number===chosenPiece+2){
+                    nextSquares[number-1]= Pieces.piece(squares[number+1].type, squares[number+1].color, number-1);
+                    nextSquares[number+1] = null;
+                }
+                else if(number===chosenPiece-2){
+                    nextSquares[number+1]= Pieces.piece(squares[number-2].type, squares[number-2].color, number+1);
+                    nextSquares[number-2] = null;
                 }
             }
             nextSquares[number] = Pieces.piece(squares[chosenPiece].type, squares[chosenPiece].color, number);

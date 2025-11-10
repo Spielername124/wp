@@ -46,7 +46,7 @@ export function validatingLegalityController (currentBoard, lastBoard, movingPie
     if(newPos>=64)return false;
     const typeSpecificValidation = typeSpecificValdiationRules[movingPiece.type];
         if(typeSpecificValidation){
-            return typeSpecificValidation(currentBoard, lastBoard, movingPiece, newPos);
+            return typeSpecificValidation(currentBoard, lastBoard, movingPiece, newPos,checkingNextTurnSchach);
         }
 
     return false;
@@ -106,7 +106,8 @@ const typeSpecificValdiationRules= {
         return diagonalLineValidation(currentBoard, movingPiece, newPos) ||
             straightLineValidation(currentBoard, movingPiece, newPos);
     },
-    'K':  (currentBoard, lastBoard, movingPiece, newPos)=>{
+    'K':  (currentBoard, lastBoard, movingPiece, newPos, checkingNextTurnSchach)=>{
+        if(isRochade(currentBoard, lastBoard, movingPiece, newPos,checkingNextTurnSchach))return true;
         const movingRow = Math.trunc(movingPiece.currentPos / 8);
         const targetRow = Math.trunc(newPos / 8);
         const movingCol = movingPiece.currentPos % 8;
@@ -129,6 +130,47 @@ const typeSpecificValdiationRules= {
 
 
 }
+export function isRochade(currentBoard, lastBoard, movingPiece, newPos,checkingNextTurnSchach){
+    if(checkingNextTurnSchach || isSchach(currentBoard,currentBoard,movingPiece.color, true))return false;
+    if(movingPiece.specialboolean!==true)return false;
+    if(movingPiece.currentPos+2===newPos){
+        if(currentBoard[movingPiece.currentPos+1]!==null ||
+            currentBoard[movingPiece.currentPos+2]!==null||
+            currentBoard[movingPiece.currentPos+3]===null||
+            currentBoard[movingPiece.currentPos+3].type!=='T'||
+            currentBoard[movingPiece.currentPos+3].color!==movingPiece.color||
+            currentBoard[movingPiece.currentPos+3].specialboolean!==true)return false;
+
+        const schachTestBoard = currentBoard.slice();
+        schachTestBoard[movingPiece.currentPos+1] = piece(movingPiece.type, movingPiece.color, movingPiece.currentPos+1);
+        schachTestBoard[movingPiece.currentPos]=null;
+        if(isSchach(schachTestBoard, lastBoard, movingPiece.color,true))return false;
+        schachTestBoard[movingPiece.currentPos+1] = null;
+        schachTestBoard[movingPiece.currentPos+2] = piece(movingPiece.type, movingPiece.color, movingPiece.currentPos+2);
+        if(isSchach(schachTestBoard, lastBoard, movingPiece.color,true))return false;
+        return true;
+    }
+    if(movingPiece.currentPos-2===newPos){
+        if(currentBoard[movingPiece.currentPos-1]!==null ||
+            currentBoard[movingPiece.currentPos-2]!==null||
+            currentBoard[movingPiece.currentPos-3]!==null||
+            currentBoard[movingPiece.currentPos-4]===null||
+            currentBoard[movingPiece.currentPos-4].type!=='T'||
+            currentBoard[movingPiece.currentPos-4].color!==movingPiece.color||
+            currentBoard[movingPiece.currentPos-4].specialboolean!==true)return false;
+
+        const schachTestBoard = currentBoard.slice();
+        schachTestBoard[movingPiece.currentPos-1] = piece(movingPiece.type, movingPiece.color, movingPiece.currentPos-1);
+        schachTestBoard[movingPiece.currentPos]=null;
+        if(isSchach(schachTestBoard, lastBoard, movingPiece.color,true))return false;
+        schachTestBoard[movingPiece.currentPos-1] = null;
+        schachTestBoard[movingPiece.currentPos-2] = piece(movingPiece.type, movingPiece.color, movingPiece.currentPos-2);
+        if(isSchach(schachTestBoard, lastBoard, movingPiece.color,true))return false;
+        return true;
+    }
+}
+
+
 function diagonalLineValidation(currentBoard, movingPiece, newPos){
     const movingRow = Math.trunc(movingPiece.currentPos / 8);
     const movingCol = movingPiece.currentPos % 8;

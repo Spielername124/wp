@@ -60,6 +60,7 @@ export default function Game(){
     }
 
     function jumpTo(nextMove) {
+        resetBadges();
         setCurrentMove(nextMove);
     }
     const moves = history.map((squares, move) =>{
