@@ -4,9 +4,9 @@ import * as Pieces from "./Pieces.jsx";
 import {Square} from "./Square.jsx";
 
 
-export function Board({isNext, lastSquares, squares, onPlay, readOnly,setBadge,resetBadges,playerColor}) {
+export function Board({lastSquares, squares, onPlay, readOnly,setBadge,resetBadges,playerColor}) {
     const [chosenPiece, setChosenPiece] = useState(null);
-
+    const isWhite = playerColor=== 'W'
     function showIndicators(number) {
         //TODO: Make more efficient if bored
         for (let i = 0; i < 64; i++) {
@@ -20,8 +20,14 @@ export function Board({isNext, lastSquares, squares, onPlay, readOnly,setBadge,r
         if (readOnly) return;
         const nextSquares = squares.slice();
         if (squares[number] == null && chosenPiece == null) {
+            resetBadges(nextSquares);
             return;
         }
+        if(chosenPiece===null&&((squares[number].color==='w'&& !isWhite)|| squares[number].color==='b'&& isWhite)){
+            resetBadges();
+            return;
+        }
+
         if (chosenPiece == null) {
             setChosenPiece(number)
             showIndicators(number);

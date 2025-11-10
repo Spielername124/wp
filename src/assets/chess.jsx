@@ -35,10 +35,9 @@ export default function Game(){
     const [currentMove, setCurrentMove] = useState(0);
     const lastSquares = currentMove>0?history[currentMove-1]:null;
     const currentSquares = history[currentMove];
-    const isNext = currentMove % 2 === 0;
     const isNotHistory = currentMove === history.length - 1;
     const [badges, setBadges] = useState(() => Array(64).fill(null));
-    const [playerColor] = useState('W');
+    const [playerColor, setPlayerColor] = useState('W');
 
     function setBadge(index, text){
         setBadges(prev => {
@@ -59,6 +58,12 @@ export default function Game(){
         const nextHistory =  [...history.slice(0, currentMove + 1),nextSquares];
         setHistory(nextHistory);
         setCurrentMove(nextHistory.length - 1);
+        if(playerColor === 'W'){
+            setPlayerColor('B');
+        }
+        else{
+            setPlayerColor('W');
+        }
 
     }
 
@@ -79,13 +84,12 @@ export default function Game(){
             </li>
         );
     });
-
+//TODO: Bauerumwanlung, und schachmatt
     return  (
         <div className="game">
             <div className="game-board">
                 <div className="board-overlay-wrap">
-                    <Board isNext={isNext}
-                           squares={currentSquares}
+                    <Board squares={currentSquares}
                            lastSquares={lastSquares}
                            onPlay={handlePlay}
                            readOnly={!isNotHistory}
