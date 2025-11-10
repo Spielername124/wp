@@ -4,79 +4,98 @@ import * as Pieces from "./Pieces.jsx";
 import {Square} from "./Square.jsx";
 
 
-export function Board({isNext, lastSquares, squares, onPlay, readOnly,setBadge,resetBadges}){
-    const[chosenPiece, setChosenPiece] = useState(null);
+export function Board({isNext, lastSquares, squares, onPlay, readOnly,setBadge,resetBadges,playerColor}) {
+    const [chosenPiece, setChosenPiece] = useState(null);
 
-    function showIndicators(number){
+    function showIndicators(number) {
         //TODO: Make more efficient if bored
-        for(let i=0; i<64; i++){
-            if(validatingLegalityController(squares, lastSquares,squares[number], i)){
+        for (let i = 0; i < 64; i++) {
+            if (validatingLegalityController(squares, lastSquares, squares[number], i)) {
                 setBadge(i, "X");
             }
         }
     }
 
-    function handleClick(number){
-        if(readOnly)return;
+    function handleClick(number) {
+        if (readOnly) return;
         const nextSquares = squares.slice();
-        if(squares[number]==null&&chosenPiece==null){
+        if (squares[number] == null && chosenPiece == null) {
             return;
         }
-        if(chosenPiece==null){
+        if (chosenPiece == null) {
             setChosenPiece(number)
             showIndicators(number);
             setBadge(number, "A");
             return;
-        }
-        else if(chosenPiece===number){
+        } else if (chosenPiece === number) {
             setChosenPiece(null);
             resetBadges();
             return;
-        }
-        else if(Pieces.validatingLegalityController(nextSquares, lastSquares, squares[chosenPiece], number)){
-            if(lastSquares!== null && (squares[chosenPiece].type==='B' && isEnPassant(nextSquares, lastSquares, squares[chosenPiece], number))) {
+        } else if (Pieces.validatingLegalityController(nextSquares, lastSquares, squares[chosenPiece], number)) {
+            if (lastSquares !== null && (squares[chosenPiece].type === 'B' && isEnPassant(nextSquares, lastSquares, squares[chosenPiece], number))) {
                 if (squares[chosenPiece].color === 'w') {
                     nextSquares[number + 8] = null;
                 } else {
                     nextSquares[number - 8] = null;
                 }
             }
-            if(squares[chosenPiece].type==='K'){
-                if(number===chosenPiece+2){
-                    nextSquares[number-1]= Pieces.piece(squares[number+1].type, squares[number+1].color, number-1);
-                    nextSquares[number+1] = null;
-                }
-                else if(number===chosenPiece-2){
-                    nextSquares[number+1]= Pieces.piece(squares[number-2].type, squares[number-2].color, number+1);
-                    nextSquares[number-2] = null;
+            if (squares[chosenPiece].type === 'K') {
+                if (number === chosenPiece + 2) {
+                    nextSquares[number - 1] = Pieces.piece(squares[number + 1].type, squares[number + 1].color, number - 1);
+                    nextSquares[number + 1] = null;
+                } else if (number === chosenPiece - 2) {
+                    nextSquares[number + 1] = Pieces.piece(squares[number - 2].type, squares[number - 2].color, number + 1);
+                    nextSquares[number - 2] = null;
                 }
             }
             nextSquares[number] = Pieces.piece(squares[chosenPiece].type, squares[chosenPiece].color, number);
             nextSquares[squares[chosenPiece].currentPos] = null;
             resetBadges();
             setChosenPiece(null);
-            onPlay(nextSquares);}
-        else{
+            onPlay(nextSquares);
+        } else {
             setChosenPiece(null);
             resetBadges();
         }
 
     }
 
-    return(
-        <>
-            {Array.from({length: 8}, (_, i) => (
-                <div key={i} className="board-row">
-                    {Array.from({length: 8}, (_, j) => (
-                        <Square
-                            key={j}
-                            index={i * 8 + j}
-                            value={squares[i * 8 + j]}
-                            onSquareClick={() => handleClick(i * 8 + j)}
-                        />
-                    ))}
-                </div>
-            ))}
-        </>
-    );
+    if (playerColor === 'W') {
+        return (
+            <>
+                {Array.from({length: 8}, (_, i) => (
+                    <div key={i} className="board-row">
+                        {Array.from({length: 8}, (_, j) => (
+                            <Square
+                                key={j}
+                                index={i * 8 + j}
+                                value={squares[i * 8 + j]}
+                                onSquareClick={() => handleClick(i * 8 + j)}
+                                playerColor={playerColor}
+                            />
+                        ))}
+                    </div>
+                ))}
+            </>
+        );
+    }
+    if(playerColor==='B') {
+        return (
+            <>
+                {Array.from({length: 8}, (_, originalRowIndex) => 7 - originalRowIndex).map(i => (
+                    <div key={i} className="board-row">
+                        {Array.from({length: 8}, (_, originalColIndex) => 7 - originalColIndex).map(j =>
+                            <Square
+                                key={j}
+                                index={i * 8 + j}
+                                value={squares[i * 8 + j]}
+                                onSquareClick={() => handleClick(i * 8 + j)}
+                                playerColor={playerColor}
+                            />
+                        )}
+                    </div>
+                ))}
+            </>
+        );
+    }
 }

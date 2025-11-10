@@ -1,6 +1,7 @@
 import {useState} from "react";
 import * as Pieces from "./Pieces.jsx";
 import {Board} from "./Board.jsx";
+import {BadgesLayer} from "./Badges.jsx";
 
 function Restart(){
     const initial = Array(64).fill(null);
@@ -37,6 +38,7 @@ export default function Game(){
     const isNext = currentMove % 2 === 0;
     const isNotHistory = currentMove === history.length - 1;
     const [badges, setBadges] = useState(() => Array(64).fill(null));
+    const [playerColor] = useState('W');
 
     function setBadge(index, text){
         setBadges(prev => {
@@ -46,10 +48,11 @@ export default function Game(){
         });
     }
     function resetBadges(){
-        setBadges(prev => {
+        setBadges(() => {
             return Array(64).fill(null);
         });
     }
+
 
 
     function handlePlay(nextSquares){
@@ -88,13 +91,10 @@ export default function Game(){
                            readOnly={!isNotHistory}
                            setBadge={setBadge}
                            resetBadges={resetBadges}
+                           playerColor={playerColor}
                     />
 
-                    <div className="badges-layer">
-                        {Array.from({ length: 64 }, (_, idx) => (
-                            <span key={idx} className="badge">{badges[idx] ?? ''}</span>
-                        ))}
-                    </div>
+                    <BadgesLayer badges={badges} playerColour={playerColor}/>
                 </div>
             </div>
             <div className="game-info">
