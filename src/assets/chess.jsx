@@ -84,7 +84,7 @@ export default function Game(){
             </li>
         );
     });
-//TODO: Bauerumwanlung, und schachmatt
+//TODO: Bauerumwanlung
     return  (
         <div className="game">
             <div className="game-board">

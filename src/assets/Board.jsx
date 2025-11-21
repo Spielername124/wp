@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {isEnPassant, isRochade, validatingLegalityController} from "./Pieces.jsx";
+import {isEnPassant, isSchachMatt, validatingLegalityController} from "./Pieces.jsx";
 import * as Pieces from "./Pieces.jsx";
 import {Square} from "./Square.jsx";
 
@@ -18,11 +18,12 @@ export function Board({lastSquares, squares, onPlay, readOnly,setBadge,resetBadg
 
     function handleClick(number) {
         if (readOnly) return;
-        const nextSquares = squares.slice();
+        let nextSquares = squares.slice();
         if (squares[number] == null && chosenPiece == null) {
             resetBadges(nextSquares);
             return;
         }
+
         if(chosenPiece===null&&((squares[number].color==='w'&& !isWhite)|| squares[number].color==='b'&& isWhite)){
             resetBadges();
             return;
@@ -58,6 +59,10 @@ export function Board({lastSquares, squares, onPlay, readOnly,setBadge,resetBadg
             nextSquares[squares[chosenPiece].currentPos] = null;
             resetBadges();
             setChosenPiece(null);
+            if(isSchachMatt(nextSquares,squares,'b')|| isSchachMatt(nextSquares,squares,'w')){
+                nextSquares = Array(64).fill(null);
+            }
+
             onPlay(nextSquares);
         } else {
             setChosenPiece(null);

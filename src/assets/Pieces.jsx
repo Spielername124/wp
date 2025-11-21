@@ -19,6 +19,19 @@ function isSchach(currentBoard, lastBoard, color, checkingNextTurnSchach=false) 
     }
     return false;
 }
+export function isSchachMatt(squares, lastSquares, color){
+    for(let i=0; i<64; i++) {
+        if (squares[i] !== null && squares[i].color === color && canMove(squares, lastSquares, i)) return false;
+    }
+    return true;
+}
+function canMove(squares, lastSquares, number){
+    for(let i=0; i<64; i++){
+        if(validatingLegalityController(squares, lastSquares, squares[number], i))return true;
+    }
+    return false;
+}
+
 function isNextTurnSchach(squares, lastSquares, chosenPiece, number ){
     const nextSquares=squares.slice();
     if(validatingLegalityController(nextSquares, lastSquares, squares[chosenPiece], number,true)) {
@@ -130,7 +143,7 @@ const typeSpecificValdiationRules= {
 
 
 }
-export function isRochade(currentBoard, lastBoard, movingPiece, newPos,checkingNextTurnSchach){
+function isRochade(currentBoard, lastBoard, movingPiece, newPos,checkingNextTurnSchach){
     if(checkingNextTurnSchach || isSchach(currentBoard,currentBoard,movingPiece.color, true))return false;
     if(movingPiece.specialboolean!==true)return false;
     if(movingPiece.currentPos+2===newPos){
