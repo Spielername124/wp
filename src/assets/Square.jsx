@@ -1,9 +1,9 @@
-export function Square({ index, value, onSquareClick, playerColor }){
+import BauernumwandlungPopUp from "./BauernumwandlungPopUp.jsx";
+
+export function Square({ index, value, onSquareClick, playerColor, isInPromotion, onPromotionSelect}){
     const row = Math.floor(index / 8);
     const col = index % 8;
-    // Correct chessboard coloring: A8 (row 0, col 0) is dark for White view
     const baseIsDark = (row + col) % 2 === 0;
-    // For Black view, invert the colors so the pattern is reversed from their perspective
     const isDark = playerColor === 'B' ? !baseIsDark : baseIsDark;
 
     const classNames = [
@@ -12,11 +12,21 @@ export function Square({ index, value, onSquareClick, playerColor }){
         value && value.color ? `square--color-${value.color}` : ''
     ].join(' ').trim();
 
-    return(
+    const squareButton = (
         <button
             className={classNames}
             onClick={onSquareClick}>
             {value ? value.type : null}
         </button>
     )
+    if(isInPromotion){
+        return (
+            <BauernumwandlungPopUp
+                trigger={squareButton}
+                isOpen={true}
+                onSelect={onPromotionSelect}
+            />
+        );
+    }
+    return squareButton;
 }
