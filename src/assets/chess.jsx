@@ -27,7 +27,6 @@ function Restart(){
     initial[61]=Pieces.piece('S', 'w',61);
     initial[62]=Pieces.piece('P', 'w',62);
     initial[63]=Pieces.piece('T', 'w',63,true);
-    initial[50]=Pieces.piece('B', 'b', 50,true);
 
     return initial
 }
