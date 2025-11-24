@@ -19,6 +19,7 @@ export function Board({lastSquares, squares, onPlay, readOnly,setBadge,resetBadg
     }
 
     function handleClick(number) {
+
         //restricting movement while promotion is pending or readOnly
         if (pendingPromotion) return;
         if (readOnly) return;

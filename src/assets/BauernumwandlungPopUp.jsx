@@ -1,14 +1,16 @@
 import React from 'react';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
+import './Pieces.jsx'
+import * as Pieces from "./Pieces.jsx";
 
-export default function BauernumwandlungPopUp({ isOpen, onClose, trigger, onSelect }) {
+export default function BauernumwandlungPopUp({ isOpen, onClose, trigger, onSelect, color, tone }) {
+    const normalizedColor = (color || '').toString().toLowerCase();
     const figures = [
-        {type: 'D'},
-        {type: 'P'},
-        {type: 'S'},
-        {type: 'T'},
-
+        { piece: Pieces.piece('D', normalizedColor, 0) },
+        { piece: Pieces.piece('P', normalizedColor, 0) },
+        { piece: Pieces.piece('S', normalizedColor, 0) },
+        { piece: Pieces.piece('T', normalizedColor, 0) },
     ];
 
     return (
@@ -16,24 +18,27 @@ export default function BauernumwandlungPopUp({ isOpen, onClose, trigger, onSele
             open={isOpen}
             onClose={onClose}
             trigger={trigger}
-            position = "top center"
+            position={["top center", "right center", "bottom center", "left center"]}
             arrow={true}
             closeOnDocumentClick={false}
-        ><div className="promotion-menu" style={{ padding: '10px', textAlign: 'center', background: 'white', border: '1px solid #ccc' }}>
-            <h4>Wähle Figur:</h4>
-            <div style={{ display: 'flex', gap: '5px' }}>
+            keepTooltipInside="body"
+            repositionOnResize
+        >
+            <div className={`promotion-menu promotion-menu--tone-${tone}`}>
+                <div className="promotion-grid">
                 {figures.map((fig) => (
                     <button
-                        key={fig.type}
-                        onClick={() => onSelect(fig.type)}
-                        style={{ fontSize: '1.5rem', cursor: 'pointer', padding: '5px' }}
+                        className="promotion-btn"
+                        key={fig.piece.type}
+                        onClick={() => onSelect(fig.piece.type)}
                     >
-                        {fig.label}
+                        <span className={`promotion-piece square--color-${normalizedColor}`}>
+                            {fig.piece.type}
+                        </span>
                     </button>
                 ))}
+                </div>
             </div>
-        </div>
         </Popup>
     );
-
 }

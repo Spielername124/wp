@@ -25,6 +25,8 @@ export function Square({ index, value, onSquareClick, playerColor, isInPromotion
                 trigger={squareButton}
                 isOpen={true}
                 onSelect={onPromotionSelect}
+                color={playerColor}
+                tone={isDark ? 'dark' : 'light'}
             />
         );
     }

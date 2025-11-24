@@ -106,8 +106,14 @@ body {
 
 
 /* Chess board square backgrounds */
-.square--light { background: #eee; }
-.square--dark  { background: #769656; }
+/* Zentrale Farb-Variablen: Eine Änderung hier wirkt auf Board & Popup */
+:root {
+  --square-light-bg: #eeeeee;
+  --square-dark-bg:  #769656;
+}
+
+.square--light { background: var(--square-light-bg); }
+.square--dark  { background: var(--square-dark-bg); }
 
 /* Chess: only text colors by piece color */
 /* Use clearly distinct colors so the change is visible */
@@ -129,7 +135,8 @@ button {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-auto-rows: 1fr;
-  width: min(80vmin, 640px);
+  /* leicht kleiner, damit für Popup oben Platz bleibt */
+  width: min(76vmin, 620px);
   aspect-ratio: 1 / 1;
 }
 
@@ -152,4 +159,78 @@ button {
   font-weight: 700;
   font-size: 16px;
   color: rgba(255, 255, 255, 0.8);
+}
+
+/* --- Promotion Popup Styles --- */
+.popup-content {
+  /* Popup-Größe responsiv begrenzen */
+  width: clamp(200px, 60vmin, 420px);
+  max-width: 92vw;
+  /* Popup soll nicht scrollen und stets im Viewport gehalten werden (via keepTooltipInside) */
+  overflow: visible;
+}
+
+.promotion-menu {
+  padding: 10px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+.promotion-title {
+  margin: 0 0 8px 0;
+  color: #111;
+}
+
+.promotion-grid {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.promotion-btn {
+  background: #f4f6f8; /* wird per Ton-Modifier überschrieben */
+  border: 1px solid #cfd8dc; /* wird per Ton-Modifier überschrieben */
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
+}
+
+.promotion-btn:hover {
+  /* keine harte Farbänderung, um Schema (hell/dunkel) zu erhalten */
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.promotion-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.promotion-piece {
+  display: inline-block;
+  font-size: 1.6rem;
+  line-height: 1;
+  font-weight: bold; /* wie auf dem Feld */
+}
+
+/* Farbkopplung Popup-Buttons an Square-Farben */
+.promotion-menu--tone-light .promotion-btn {
+  /* Ziel-Feld ist hell: Text hell, Hintergrund dunkel */
+  background: var(--square-dark-bg);
+  border-color: color-mix(in srgb, var(--square-dark-bg) 85%, #000 15%);
+}
+
+.promotion-menu--tone-dark .promotion-btn {
+  /* Ziel-Feld ist dunkel: Text dunkel, Hintergrund hell */
+  background: var(--square-light-bg);
+  border-color: color-mix(in srgb, var(--square-light-bg) 85%, #000 15%);
+}
+
+/* Etwas mehr Platz oben für das Popup */
+.game {
+  padding-top: clamp(24px, 4vmin, 40px);
 }
