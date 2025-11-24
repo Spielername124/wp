@@ -8,7 +8,7 @@ function searchKing(currentBoard, color){
     }
     return null;
 }
-function isSchach(currentBoard, lastBoard, color, checkingNextTurnSchach=false) {
+export function isSchach(currentBoard, lastBoard, color, checkingNextTurnSchach=false) {
     const kingPos = searchKing(currentBoard, color);
     for (let i = 0; i < 64; i++) {
         if (currentBoard[i] !== null && currentBoard[i].color !== color) {
@@ -19,7 +19,7 @@ function isSchach(currentBoard, lastBoard, color, checkingNextTurnSchach=false) 
     }
     return false;
 }
-export function isSchachMatt(squares, lastSquares, color){
+export function noPossibleMoves(squares, lastSquares, color){
     for(let i=0; i<64; i++) {
         if (squares[i] !== null && squares[i].color === color && canMove(squares, lastSquares, i)) return false;
     }

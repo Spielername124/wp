@@ -85,7 +85,7 @@ export default function Game(){
             </li>
         );
     });
-//TODO: Bauerumwanlung, REMIS von Schachmatt unterscheiden.
+//TODO: Popup for after the game finished
     return  (
         <div className="game">
             <div className="game-board">

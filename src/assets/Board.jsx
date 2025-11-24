@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {isEnPassant, isSchachMatt, piece, validatingLegalityController} from "./Pieces.jsx";
+import {isEnPassant, noPossibleMoves, piece, validatingLegalityController, isSchach} from "./Pieces.jsx";
 import * as Pieces from "./Pieces.jsx";
 import {Square} from "./Square.jsx";
 
@@ -81,9 +81,14 @@ export function Board({lastSquares, squares, onPlay, readOnly,setBadge,resetBadg
             resetBadges();
             setChosenPiece(null);
             //nuking the field if other side has no valid moves (nuking for debugging reasons) but is only schachmatt if it is schach an no valid moves.
-            //Implementet like this is a remis schachmatt to.
-            if(isSchachMatt(nextSquares,squares,'b')|| isSchachMatt(nextSquares,squares,'w')){
-                nextSquares = Array(64).fill(null);
+            //TODO if Bored: make more efficient
+            if(noPossibleMoves(nextSquares,squares,'b')|| noPossibleMoves(nextSquares,squares,'w')){
+                if(isSchach(nextSquares,squares,'b', false)||isSchach(nextSquares,squares,'w', false)){
+                    nextSquares= Array(64).fill(piece('K','w',0));
+                }
+                else {
+                    nextSquares = Array(64).fill(null);
+                }
             }
             //moving on
             onPlay(nextSquares);
@@ -114,7 +119,7 @@ export function Board({lastSquares, squares, onPlay, readOnly,setBadge,resetBadg
         resetBadges();
 
         // Schachmatt prüfen (optional, je nach deiner Logik)
-        if(isSchachMatt(nextSquares, squares, 'b') || isSchachMatt(nextSquares, squares, 'w')){
+        if(noPossibleMoves(nextSquares, squares, 'b') || noPossibleMoves(nextSquares, squares, 'w')){
             // nextSquares = Array(64).fill(null); // Deine Reset Logik
         }
 
