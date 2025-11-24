@@ -2,6 +2,7 @@ import {useState} from "react";
 import * as Pieces from "./Pieces.jsx";
 import {Board} from "./Board.jsx";
 import {BadgesLayer} from "./Badges.jsx";
+import EndScreen from "./EndScreen.jsx";
 
 function Restart(){
     const initial = Array(64).fill(null);
@@ -38,6 +39,9 @@ export default function Game(){
     const isNotHistory = currentMove === history.length - 1;
     const [badges, setBadges] = useState(() => Array(64).fill(null));
     const [playerColor, setPlayerColor] = useState('W');
+    const [endOpen, setEndOpen] = useState(false);
+    const [endTitle, setEndTitle] = useState('');
+    const [endMessage, setEndMessage] = useState('');
 
     function setBadge(index, text){
         setBadges(prev => {
@@ -74,9 +78,9 @@ export default function Game(){
     const moves = history.map((squares, move) =>{
         let description;
         if (move > 0) {
-            description = 'Go to move #' + move;
+            description = 'move ' + move;
         } else {
-            description = 'Go to game start';
+            description = 'initial';
         }
         return(
             <li key={move}>
@@ -85,6 +89,29 @@ export default function Game(){
         );
     });
 //TODO: Popup for after the game finished
+    function handleGameEnd({ type, winner }) {
+        if (type === 'd') {
+            setEndTitle('Remis');
+            setEndMessage('Die Partie endet unentschieden.');
+        } else if (type === 's') {
+            setEndTitle('Schachmatt');
+            setEndMessage(winner === 'w' ? 'Weiß gewinnt!' : 'Schwarz gewinnt!');
+        } else {
+            setEndTitle('Spiel beendet');
+            setEndMessage('');
+        }
+        setEndOpen(true);
+    }
+
+    function handleRematch() {
+        setHistory([Restart()]);
+        setCurrentMove(0);
+        setPlayerColor('W');
+        resetBadges();
+        setEndOpen(false);
+    }
+
+
     return  (
         <div className="game">
             <div className="game-board">
@@ -96,14 +123,25 @@ export default function Game(){
                            setBadge={setBadge}
                            resetBadges={resetBadges}
                            playerColor={playerColor}
+                           onGameEnd={handleGameEnd}
                     />
 
                     <BadgesLayer badges={badges} playerColour={playerColor}/>
                 </div>
             </div>
             <div className="game-info">
-                <ol>{moves}</ol>
+                <ol className="moves-list">{moves}</ol>
+                <div className="game-info__actions">
+                    <button className="btn btn--primary" onClick={handleRematch}>Rematch</button>
+                </div>
             </div>
+            <EndScreen
+                open={endOpen}
+                onClose={() => setEndOpen(false)}
+                onRematch={handleRematch}
+                title={endTitle}
+                message={endMessage}
+            />
         </div>
     );
 }

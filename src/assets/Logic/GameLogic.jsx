@@ -1,5 +1,8 @@
 import {validatingLegalityController} from "./moveValidation.jsx";
 
+
+//TODO if Bored: make everything here that iterates over the board more efficient
+
 function searchKing(currentBoard, color){
     for(let i=0; i<64; i++){
         if(currentBoard[i]!== null && currentBoard[i].color === color && currentBoard[i].type === 'K')return i;

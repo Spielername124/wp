@@ -3,8 +3,8 @@ import BauernumwandlungPopUp from "./BauernumwandlungPopUp.jsx";
 export function Square({ index, value, onSquareClick, playerColor, isInPromotion, onPromotionSelect}){
     const row = Math.floor(index / 8);
     const col = index % 8;
-    const baseIsDark = (row + col) % 2 === 0;
-    const isDark = playerColor === 'B' ? !baseIsDark : baseIsDark;
+
+    const isDark = ((row + col) % 2) === 1;
 
     const classNames = [
         'square',

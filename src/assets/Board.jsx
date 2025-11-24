@@ -5,7 +5,7 @@ import {noPossibleMoves, isSchach} from "./Logic/GameLogic.jsx"
 import {Square} from "./Square.jsx";
 
 
-export function Board({lastSquares, squares, onPlay, readOnly,setBadge,resetBadges,playerColor}) {
+export function Board({lastSquares, squares, onPlay, readOnly,setBadge,resetBadges,playerColor,onGameEnd}) {
     const [chosenPiece, setChosenPiece] = useState(null);
     const [pendingPromotion, setPendingPromotion] = useState(null);
 
@@ -81,14 +81,16 @@ export function Board({lastSquares, squares, onPlay, readOnly,setBadge,resetBadg
             nextSquares[squares[chosenPiece].currentPos] = null;
             resetBadges();
             setChosenPiece(null);
-            //nuking the field if other side has no valid moves (nuking for debugging reasons) but is only schachmatt if it is schach an no valid moves.
-            //TODO if Bored: make more efficient
-            if(noPossibleMoves(nextSquares,squares,'b')|| noPossibleMoves(nextSquares,squares,'w')){
-                if(isSchach(nextSquares,squares,'b', false)||isSchach(nextSquares,squares,'w', false)){
-                    nextSquares= Array(64).fill(piece('K','w',0));
+
+            //Logic if no moves for the next player is poosible -> remis or winn
+
+            const nextToMove = isWhite? 'b': 'w';
+            if(noPossibleMoves(nextSquares,squares,nextToMove)){
+                if(isSchach(nextSquares,squares, nextToMove, false)){
+                    onGameEnd({type:'s', winner: nextSquares[number].color});
                 }
                 else {
-                    nextSquares = Array(64).fill(null);
+                    onGameEnd({type:'d'});
                 }
             }
             //moving on
@@ -105,23 +107,22 @@ export function Board({lastSquares, squares, onPlay, readOnly,setBadge,resetBadg
     function handlePromotionSelect(type) {
         if(!pendingPromotion) return;
         const { sourceIndex, targetIndex } = pendingPromotion;
+
         let nextSquares = squares.slice();
-
-        // Alte Figur weg
         nextSquares[sourceIndex] = null;
-
-        // Neue Figur hin (Farbe übernehmen)
-        const color = squares[sourceIndex].color;
-        nextSquares[targetIndex] = piece(type, color, targetIndex);
-
-        // Aufräumen
+        nextSquares[targetIndex] = piece(type, squares[sourceIndex].color, targetIndex);
         setChosenPiece(null);
-        setPendingPromotion(null); // Popup schließen
+        setPendingPromotion(null);
         resetBadges();
 
-        // Schachmatt prüfen (optional, je nach deiner Logik)
-        if(noPossibleMoves(nextSquares, squares, 'b') || noPossibleMoves(nextSquares, squares, 'w')){
-            // nextSquares = Array(64).fill(null); // Deine Reset Logik
+        const nextToMove = isWhite? 'b': 'w';
+        if(noPossibleMoves(nextSquares,squares,nextToMove)){
+            if(isSchach(nextSquares,squares, nextToMove, false)){
+                onGameEnd({type:'s', winner: nextToMove=== 'w'? 'b': 'w'});
+            }
+            else {
+                onGameEnd({type:'d'});
+            }
         }
 
         onPlay(nextSquares);
