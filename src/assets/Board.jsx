@@ -1,6 +1,7 @@
 import {useState} from "react";
-import {isEnPassant, noPossibleMoves, piece, validatingLegalityController, isSchach} from "./Pieces.jsx";
-import * as Pieces from "./Pieces.jsx";
+import { piece} from "./Pieces.jsx";
+import {isEnPassant, validatingLegalityController} from "./Logic/moveValidation.jsx"
+import {noPossibleMoves, isSchach} from "./Logic/GameLogic.jsx"
 import {Square} from "./Square.jsx";
 
 
@@ -49,7 +50,7 @@ export function Board({lastSquares, squares, onPlay, readOnly,setBadge,resetBadg
             return;
         }
         //Validating move and playing it
-        else if (Pieces.validatingLegalityController(nextSquares, lastSquares, squares[chosenPiece], number)) {
+        else if (validatingLegalityController(nextSquares, lastSquares, squares[chosenPiece], number)) {
             const targetRow = Math.floor(number / 8);
 
             // Promotion-Logik
@@ -68,15 +69,15 @@ export function Board({lastSquares, squares, onPlay, readOnly,setBadge,resetBadg
             //rochade special logic
             if (squares[chosenPiece].type === 'K') {
                 if (number === chosenPiece + 2) {
-                    nextSquares[number - 1] = Pieces.piece(squares[number + 1].type, squares[number + 1].color, number - 1);
+                    nextSquares[number - 1] = piece(squares[number + 1].type, squares[number + 1].color, number - 1);
                     nextSquares[number + 1] = null;
                 } else if (number === chosenPiece - 2) {
-                    nextSquares[number + 1] = Pieces.piece(squares[number - 2].type, squares[number - 2].color, number + 1);
+                    nextSquares[number + 1] = piece(squares[number - 2].type, squares[number - 2].color, number + 1);
                     nextSquares[number - 2] = null;
                 }
             }
             //common move logic
-            nextSquares[number] = Pieces.piece(squares[chosenPiece].type, squares[chosenPiece].color, number);
+            nextSquares[number] = piece(squares[chosenPiece].type, squares[chosenPiece].color, number);
             nextSquares[squares[chosenPiece].currentPos] = null;
             resetBadges();
             setChosenPiece(null);
