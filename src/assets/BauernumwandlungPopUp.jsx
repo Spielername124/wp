@@ -9,7 +9,7 @@ export default function BauernumwandlungPopUp({ isOpen, onClose, trigger, onSele
     const figures = [
         { piece: Pieces.piece('D', normalizedColor, 0) },
         { piece: Pieces.piece('P', normalizedColor, 0) },
-        { piece: Pieces.piece('S', normalizedColor, 0) },
+        { piece: Pieces.piece('L', normalizedColor, 0) },
         { piece: Pieces.piece('T', normalizedColor, 0) },
     ];
 

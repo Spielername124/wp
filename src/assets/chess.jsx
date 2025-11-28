@@ -4,15 +4,17 @@ import {Board} from "./Board.jsx";
 import {BadgesLayer} from "./Badges.jsx";
 import EndScreen from "./EndScreen.jsx";
 
+//TODO: Ligtht up the chosen square instead of showing A as indicator
+
 function Restart(){
     const initial = Array(64).fill(null);
 
     initial[0] = Pieces.piece('T', 'b', 0,true);
     initial[1] = Pieces.piece('P', 'b',1);
-    initial[2] = Pieces.piece('S', 'b',2);
+    initial[2] = Pieces.piece('L', 'b',2);
     initial[3] = Pieces.piece('D', 'b',3);
     initial[4] = Pieces.piece('K', 'b',4,true);
-    initial[5] = Pieces.piece('S', 'b',5);
+    initial[5] = Pieces.piece('L', 'b',5);
     initial[6] = Pieces.piece('P', 'b',6);
     initial[7] = Pieces.piece('T', 'b',7,true);
 
@@ -22,10 +24,10 @@ function Restart(){
     }
     initial[56]=Pieces.piece('T', 'w',56,true);
     initial[57]=Pieces.piece('P', 'w',57);
-    initial[58]=Pieces.piece('S', 'w',58);
+    initial[58]=Pieces.piece('L', 'w',58);
     initial[59]=Pieces.piece('D', 'w',59);
     initial[60]=Pieces.piece('K', 'w',60,true);
-    initial[61]=Pieces.piece('S', 'w',61);
+    initial[61]=Pieces.piece('L', 'w',61);
     initial[62]=Pieces.piece('P', 'w',62);
     initial[63]=Pieces.piece('T', 'w',63,true);
 

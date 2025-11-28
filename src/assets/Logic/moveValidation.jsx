@@ -63,7 +63,7 @@ const typeSpecificValidationRules= {
     "T":(currentBoard, lastBoard, movingPiece, newPos)=>{
         return straightLineValidation(currentBoard, movingPiece, newPos);
     },
-    'S':  (currentBoard, lastBoard, movingPiece, newPos)=>{
+    'L':  (currentBoard, lastBoard, movingPiece, newPos)=>{
         return diagonalLineValidation(currentBoard, movingPiece, newPos);
     },
     'D':  (currentBoard, lastBoard, movingPiece, newPos)=>{

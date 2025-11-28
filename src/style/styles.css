@@ -245,13 +245,14 @@ button {
 }
 
 /* A single badge fills its grid cell and centers text */
+
 .badge {
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
   font-size: 16px;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(172, 16, 16, 0.8);
 }
 
 /* -- Endscreen: lokales Overlay über dem Brett (ohne reactjs-popup) -- */
