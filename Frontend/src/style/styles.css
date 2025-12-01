@@ -1,0 +1,433 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    margin-top: 0;
+    font-size: 22px;
+}
+
+h2 {
+    margin-top: 0;
+    font-size: 20px;
+}
+
+h3 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+h4 {
+    margin-top: 0;
+    font-size: 16px;
+}
+
+h5 {
+    margin-top: 0;
+    font-size: 14px;
+}
+
+h6 {
+    margin-top: 0;
+    font-size: 12px;
+}
+
+code {
+    font-size: 1.2em;
+}
+
+ul {
+    padding-inline-start: 20px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #191c20;
+    color: #fff;
+}
+
+.square {
+    background: #fff;
+    border: 1px solid #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(12px, 5vmin, 36px);
+    font-weight: bold;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+.board-row { 
+    display: contents;
+}
+
+.status {
+    margin-bottom: 10px;
+}
+.game {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Grundabstand zwischen Brett und rechter Spalte bewusst klein halten,
+       damit der Rematch-Button nicht zu weit weg ist. Den Abstand der
+       Move-Buttons regeln wir separat über einen linken Rand an der Liste. */
+    gap: 8px;
+    padding: 20px;
+}
+
+.game-info {
+    margin-left: 0;
+}
+@media (max-width: 700px) {
+    .game {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .game-info {
+        width: 100%;
+        max-width: 600px;
+    }
+}
+
+
+/* Chess board square backgrounds */
+/* Zentrale Farb-Variablen: Eine Änderung hier wirkt auf Board & Popup */
+:root {
+  --square-light-bg: #eeeeee;
+  --square-dark-bg:  #769656;
+  /* gemeinsame Basisgröße für Brett & rechte Spalte */
+  --board-size: min(76vmin, 620px);
+}
+/* Ergänzende Variablen (korrekt definiert) für Moves/Rematch-Ausrichtung */
+:root {
+  /* Abstände/Spaltenbreite der ersten Moves-Spalte */
+  --moves-margin-left: 36px; /* war 12px → Abstand zum Brett deutlich vergrößert */
+  --moves-padding-left: 18px; /* Einzug der nummerierten Liste */
+  /* Spaltenbreite stark reduzieren und an Button-Breite koppeln */
+  --moves-column-width: calc(var(--move-btn-min-ch) * 1ch + 12px);
+}
+
+.square--light { background: var(--square-light-bg); }
+.square--dark  { background: var(--square-dark-bg); }
+
+/* Chess: only text colors by piece color */
+/* Use clearly distinct colors so the change is visible */
+.square--color-w { color: #185bcd; }
+.square--color-b { color: #1b1919; }
+
+/* Semi-transparent overlay over all buttons while keeping them clickable */
+button {
+    position: relative;           /* Create a containing block for the pseudo-element */
+    overflow: hidden;             /* Keep the overlay inside the button bounds */
+}
+
+
+/* Badge overlay now rendered in a separate grid layer; legacy square pseudo-elements removed */
+
+/* Wrapper: board + overlay stacked and responsive 8×8 grid */
+.board-overlay-wrap {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-auto-rows: 1fr;
+  /* leicht kleiner, damit für Popup oben Platz bleibt */
+  width: var(--board-size);
+  aspect-ratio: 1 / 1;
+}
+
+/* Rechte Spalte: History + Rematch-Button passend zur Brett-Höhe */
+.game-info {
+  display: flex;
+  flex-direction: column;
+  height: var(--board-size);
+  align-self: center; /* auf gleiche vertikale Ausrichtung wie das Brett */
+  gap: 8px;
+}
+
+.moves-list {
+  /* nimmt verfügbaren Raum ein und bricht bei Überlauf in Spalten um */
+  height: 100%;
+  /* zusätzlicher linker Abstand, damit die Move-Buttons nicht direkt
+     am Brett kleben, ohne den Rematch-Button weiter zu entfernen */
+  margin: 0 0 0 var(--moves-margin-left);
+  /* Nummerierung links entfernen und Einzug zurücksetzen */
+  list-style: none;
+  padding-left: 0;
+  column-width: var(--moves-column-width); /* Zielbreite einer Spalte, Browser entscheidet */
+  column-gap: 12px;
+  column-fill: auto; /* fülle erst Höhe, dann neue Spalte */
+  overflow: visible; /* Inhalte/zweite Spalte nicht abschneiden */
+}
+
+.moves-list li {
+  break-inside: avoid; /* Einträge nicht über Spalten umbrechen */
+  margin: 2px 0; /* vertikalen Abstand zwischen Reihen stark reduzieren */
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* kompaktere Move-Buttons für geringeren Zeilenabstand */
+/* Standardisierte, aber nicht spaltenfüllende Breite: nur so breit wie „move XX“ */
+:root {
+  /* Anzahl der Zeichen für den Referenztext „move 88“ */
+  --move-btn-min-ch: 9; /* kleine Reserve für unterschiedliche Fonts/Browser */
+}
+
+.moves-list li > button {
+  display: inline-block;           /* nicht die ganze Spaltenbreite füllen */
+  box-sizing: border-box;
+  text-align: left;                /* Text linksbündig beibehalten */
+  padding: 2px 6px;
+  white-space: nowrap;             /* einzeilig lassen */
+  overflow: hidden;                /* längere Texte nicht überlaufen lassen */
+  text-overflow: ellipsis;         /* dezent abkürzen (z. B. bei „start“) */
+  /* Feste Zielbreite auf Basis des Referenztexts + horizontales Padding (6px links + 6px rechts) */
+  width: calc(var(--move-btn-min-ch) * 1ch + 12px);
+  min-width: calc(var(--move-btn-min-ch) * 1ch + 12px);
+}
+
+.game-info__actions {
+  margin-top: auto; /* an das untere Ende schieben */
+  display: flex;
+  /* gleiche X-Position wie die erste Moves-Spalte (Nummerierung entfernt → nur Außenabstand maßgeblich) */
+  margin-left: var(--moves-margin-left);
+  align-self: flex-start; /* an die Brettkante andocken */
+  justify-content: flex-start; /* Button-Links-Kante */
+  width: max-content; /* nicht strecken, nur so breit wie der Button */
+}
+
+@media (max-width: 700px) {
+  .game-info {
+    height: auto; /* auf kleinen Screens nicht fix an Brett koppeln */
+    align-self: stretch;
+  }
+  .moves-list {
+    column-width: auto;
+    column-gap: 0;
+    column-count: 1; /* Spalten deaktivieren */
+    overflow: visible;
+  }
+  .game-info__actions {
+    width: auto;           /* nicht an Spaltenbreite binden */
+    align-self: stretch;   /* volle Breite nutzen */
+    justify-content: center; /* auf mobilen mittig */
+    margin-left: 0;        /* keine seitliche Einrückung auf kleinen Screens */
+  }
+}
+
+/* Overlay: 8×8 grid matching responsive board cells */
+.badges-layer {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-auto-rows: 1fr;
+  pointer-events: none; /* do not block clicks to squares */
+  z-index: 1;
+}
+
+/* A single badge fills its grid cell and centers text */
+
+.badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  color: rgba(172, 16, 16, 0.8);
+}
+
+/* -- Endscreen: lokales Overlay über dem Brett (ohne reactjs-popup) -- */
+.end-local-overlay {
+  position: absolute;
+  inset: 0;                 /* füllt die gesamte Board-Fläche */
+  display: flex;
+  align-items: center;      /* exakt mittig zentrieren */
+  justify-content: center;  /* exakt mittig zentrieren */
+  z-index: 5;               /* über Badges (z-index:1) und Feldern */
+}
+
+/* --- Endscreen Popup Styles (Basis) --- */
+/* Hinweis: className wird direkt auf .popup-content gesetzt → Selektor kombinieren */
+.popup-content.end-popup {
+  /* Entfernt weißen Streifen/Hintergrund und globale Maße vom Modal */
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  width: auto !important;
+  max-width: none !important;
+}
+
+.popup-content {
+  /* Popup-Größe responsiv begrenzen */
+  width: clamp(200px, 60vmin, 420px);
+  max-width: 92vw;
+  /* Popup soll nicht scrollen und stets im Viewport gehalten werden (via keepTooltipInside) */
+  overflow: visible;
+}
+
+/* Endscreen-spezifische Übersteuerung nach der Basisregel, falls Reihenfolge greift */
+.popup-content.end-popup {
+  width: auto !important;
+  max-width: none !important;
+}
+
+/* Overlay für wirkliches Zentrieren des Inhalts */
+.popup-overlay.end-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.promotion-menu {
+  padding: 10px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+.promotion-title {
+  margin: 0 0 8px 0;
+  color: #111;
+}
+
+.promotion-grid {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.promotion-btn {
+  background: #f4f6f8; /* wird per Ton-Modifier überschrieben */
+  border: 1px solid #cfd8dc; /* wird per Ton-Modifier überschrieben */
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
+}
+
+.promotion-btn:hover {
+  /* keine harte Farbänderung, um Schema (hell/dunkel) zu erhalten */
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.promotion-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.promotion-piece {
+  display: inline-block;
+  font-size: 1.6rem;
+  line-height: 1;
+  font-weight: bold; /* wie auf dem Feld */
+}
+
+/* Farbkopplung Popup-Buttons an Square-Farben */
+.promotion-menu--tone-light .promotion-btn {
+  /* Ziel-Feld ist hell: Text hell, Hintergrund dunkel */
+  background: var(--square-dark-bg);
+  border-color: color-mix(in srgb, var(--square-dark-bg) 85%, #000 15%);
+}
+
+.promotion-menu--tone-dark .promotion-btn {
+  /* Ziel-Feld ist dunkel: Text dunkel, Hintergrund hell */
+  background: var(--square-light-bg);
+  border-color: color-mix(in srgb, var(--square-light-bg) 85%, #000 15%);
+}
+
+.end-modal {
+    position: relative;
+    padding: 16px 20px 20px;
+    background: #ffffff;
+    color: #111;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    /* quadratisch und mittig */
+    width: min(40vmin, 360px);
+    aspect-ratio: 1 / 1;
+    display: flex;           /* Spaltenlayout für Kopf/Text und Aktionen */
+    flex-direction: column;
+}
+
+.end-modal__close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    border: none;
+    background: transparent;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    color: #444;
+}
+.end-modal__close:hover { color: #000; }
+
+.end-modal__title { margin: 4px 0 8px; font-size: 20px; }
+.end-modal__message { margin: 0 0 16px; font-size: 16px; }
+
+.end-modal__body {
+  flex: 1;                  /* nimmt den verfügbaren Raum ein */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Text oben, Aktionen unten */
+  align-items: center;
+  text-align: center;       /* Text mittig ausrichten */
+}
+
+.end-modal__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;  /* Rematch Button unten zentriert */
+}
+
+/* einfache Button-Basis, optional an dein Farbschema koppeln */
+.btn {
+  border: 1px solid #cfd8dc;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn--primary {
+    background: var(--square-dark-bg);
+    color: #fff;
+    border-color: color-mix(in srgb, var(--square-dark-bg) 85%, #000 15%);
+}
+.btn--primary:hover { filter: brightness(1.05); }
+
+.btn--secondary {
+    background: var(--square-light-bg);
+    color: #111;
+    border-color: color-mix(in srgb, var(--square-light-bg) 85%, #000 15%);
+}
+.btn--secondary:hover { filter: brightness(0.98); }
+
+
+/* Etwas mehr Platz oben für das Popup */
+.game {
+  padding-top: clamp(24px, 4vmin, 40px);
+}
