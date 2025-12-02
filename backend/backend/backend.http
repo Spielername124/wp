@@ -1,0 +1,11 @@
+﻿@backend_HostAddress = http://localhost:5186
+
+POST {{backend_HostAddress}}/todoitems
+Content-Type: application/json
+
+{
+  "name":"walk dog",
+  "isComplete":true
+}
+
+###
