@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+<<<<<<< HEAD
 builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 var app = builder.Build();
@@ -18,10 +19,50 @@ app.MapGet("/todoitems/{id}", async (int id, TodoDb db) =>
             : Results.NotFound());
 
 app.MapPost("/todoitems", async (Todo todo, TodoDb db) =>
+=======
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<TodoDb>(options =>
+    options.UseNpgsql(connectionString));
+
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+var app = builder.Build();
+
+var todoItems = app.MapGroup("/todoitems");
+
+todoItems.MapGet("/", GetAllTodos);
+todoItems.MapGet("/complete", GetCompleteTodos);
+todoItems.MapGet("/{id}", GetTodo);
+todoItems.MapPost("/", CreateTodo);
+todoItems.MapPut("/{id}", UpdateTodo);
+todoItems.MapDelete("/{id}", DeleteTodo);
+
+app.Run();
+
+static async Task<IResult> GetAllTodos(TodoDb db)
+{
+    return TypedResults.Ok(await db.Todos.ToArrayAsync());
+}
+
+static async Task<IResult> GetCompleteTodos(TodoDb db)
+{
+    return TypedResults.Ok(await db.Todos.Where(t => t.IsComplete).ToListAsync());
+}
+
+static async Task<IResult> GetTodo(int id, TodoDb db)
+{
+    return await db.Todos.FindAsync(id)
+        is Todo todo
+            ? TypedResults.Ok(todo)
+            : TypedResults.NotFound();
+}
+
+static async Task<IResult> CreateTodo(Todo todo, TodoDb db)
+>>>>>>> 8835fec03fbca41fd7869e013b19b40608dc687e
 {
     db.Todos.Add(todo);
     await db.SaveChangesAsync();
 
+<<<<<<< HEAD
     return Results.Created($"/todoitems/{todo.Id}", todo);
 });
 
@@ -30,21 +71,39 @@ app.MapPut("/todoitems/{id}", async (int id, Todo inputTodo, TodoDb db) =>
     var todo = await db.Todos.FindAsync(id);
 
     if (todo is null) return Results.NotFound();
+=======
+    return TypedResults.Created($"/todoitems/{todo.Id}", todo);
+}
+
+static async Task<IResult> UpdateTodo(int id, Todo inputTodo, TodoDb db)
+{
+    var todo = await db.Todos.FindAsync(id);
+
+    if (todo is null) return TypedResults.NotFound();
+>>>>>>> 8835fec03fbca41fd7869e013b19b40608dc687e
 
     todo.Name = inputTodo.Name;
     todo.IsComplete = inputTodo.IsComplete;
 
     await db.SaveChangesAsync();
 
+<<<<<<< HEAD
     return Results.NoContent();
 });
 
 app.MapDelete("/todoitems/{id}", async (int id, TodoDb db) =>
+=======
+    return TypedResults.NoContent();
+}
+
+static async Task<IResult> DeleteTodo(int id, TodoDb db)
+>>>>>>> 8835fec03fbca41fd7869e013b19b40608dc687e
 {
     if (await db.Todos.FindAsync(id) is Todo todo)
     {
         db.Todos.Remove(todo);
         await db.SaveChangesAsync();
+<<<<<<< HEAD
         return Results.NoContent();
     }
 
@@ -52,3 +111,10 @@ app.MapDelete("/todoitems/{id}", async (int id, TodoDb db) =>
 });
 
 app.Run();
+=======
+        return TypedResults.NoContent();
+    }
+
+    return TypedResults.NotFound();
+}
+>>>>>>> 8835fec03fbca41fd7869e013b19b40608dc687e
