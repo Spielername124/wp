@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<TodoDb>(options =>
+    options.UseNpgsql(connectionString));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 var app = builder.Build();
 
