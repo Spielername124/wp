@@ -1,4 +1,7 @@
+using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
@@ -12,10 +15,8 @@ builder.Services.AddCors(options =>
 });
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<TodoDb>(options =>
-    options.UseNpgsql(connectionString));
 
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddScoped<IDbConnection>(_ => new NpgsqlConnection(connectionString));
 
 var app = builder.Build();
 
@@ -32,54 +33,50 @@ todoItems.MapDelete("/{id}", DeleteTodo);
 
 app.Run();
 
-static async Task<IResult> GetAllTodos(TodoDb db)
+
+// --- Handler-Methoden im kompakten Dapper-Stil ---
+
+static async Task<IResult> GetAllTodos(IDbConnection db)
 {
-    return TypedResults.Ok(await db.Todos.ToArrayAsync());
+    return TypedResults.Ok(
+        await db.QueryAsync<Todo>("SELECT id, name, iscomplete FROM todos"));
 }
 
-static async Task<IResult> GetCompleteTodos(TodoDb db)
+static async Task<IResult> GetCompleteTodos(IDbConnection db)
 {
-    return TypedResults.Ok(await db.Todos.Where(t => t.IsComplete).ToListAsync());
+    return TypedResults.Ok(
+        await db.QueryAsync<Todo>("SELECT id, name, iscomplete FROM todos WHERE iscomplete = true"));
 }
 
-static async Task<IResult> GetTodo(int id, TodoDb db)
+static async Task<IResult> GetTodo(int id, IDbConnection db)
 {
-    return await db.Todos.FindAsync(id)
-        is Todo todo
-            ? TypedResults.Ok(todo)
-            : TypedResults.NotFound();
+    var todo = await db.QuerySingleOrDefaultAsync<Todo>(
+        "SELECT id, name, iscomplete FROM todos WHERE id = @Id", new { Id = id });
+
+    return todo is not null ? TypedResults.Ok(todo) : TypedResults.NotFound();
 }
 
-static async Task<IResult> CreateTodo(Todo todo, TodoDb db)
+static async Task<IResult> CreateTodo(Todo todo, IDbConnection db)
 {
-    db.Todos.Add(todo);
-    await db.SaveChangesAsync();
+    todo.Id = await db.QuerySingleAsync<int>(
+        "INSERT INTO todos (name, iscomplete) VALUES (@Name, @IsComplete) RETURNING id", todo);
 
     return TypedResults.Created($"/todoitems/{todo.Id}", todo);
 }
 
-static async Task<IResult> UpdateTodo(int id, Todo inputTodo, TodoDb db)
+static async Task<IResult> UpdateTodo(int id, Todo inputTodo, IDbConnection db)
 {
-    var todo = await db.Todos.FindAsync(id);
+    var rowsAffected = await db.ExecuteAsync(
+        "UPDATE todos SET name = @Name, iscomplete = @IsComplete WHERE id = @Id",
+        new { inputTodo.Name, inputTodo.IsComplete, Id = id });
 
-    if (todo is null) return TypedResults.NotFound();
-
-    todo.Name = inputTodo.Name;
-    todo.IsComplete = inputTodo.IsComplete;
-
-    await db.SaveChangesAsync();
-
-    return TypedResults.NoContent();
+    return rowsAffected > 0 ? TypedResults.NoContent() : TypedResults.NotFound();
 }
 
-static async Task<IResult> DeleteTodo(int id, TodoDb db)
+static async Task<IResult> DeleteTodo(int id, IDbConnection db)
 {
-    if (await db.Todos.FindAsync(id) is Todo todo)
-    {
-        db.Todos.Remove(todo);
-        await db.SaveChangesAsync();
-        return TypedResults.NoContent();
-    }
+    var rowsAffected = await db.ExecuteAsync(
+        "DELETE FROM todos WHERE id =@.Id", new { Id = id });
 
-    return TypedResults.NotFound();
+    return rowsAffected > 0 ? TypedResults.NoContent() : TypedResults.NotFound();
 }

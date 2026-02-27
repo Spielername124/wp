@@ -4,22 +4,37 @@ import {useNavigate} from "react-router-dom";
 export default function GameSelector() {
     const navigate = useNavigate();
 
-    const handleStartChess = () => {
+    const handleJoinGame = () => {
         // Beispiel-Daten, die Sie mitnehmen möchten
-        const spielerInfo = {
-            name: "Spieler1",
-            level: 5,
-            letzteTodo: "Schach lernen"
+        const GameInformation = {
+            gameID: 1,
+            playerID: 2,
+            OpponentID: 1,
+            createNewGame: false,
+
         };
 
         // Navigation mit State-Übergabe
-        navigate('/chess', { state: spielerInfo });
+        navigate('/chess', { state: GameInformation });
+    };
+    const handleCreateChessGame = () => {
+        // Beispiel-Daten, die Sie mitnehmen möchten
+        //TODO: Create new game in Backend, then join
+        const GameInformation = {
+            gameID: 1, //useless
+            playerID: 1,
+            OpponentID: 2,
+            createNewGame: true,
+        };
+
+        // Navigation mit State-Übergabe
+        navigate('/chess', { state: GameInformation });
     };
 
     return (
         <div>
-            <h2>Todo Liste</h2>
-            <button onClick={handleStartChess}>Zu Schach wechseln</button>
+            <button onClick={handleCreateChessGame}>Instanz erstllen</button>
+            <button onClick={handleJoinGame}>Instanz beitreten</button>
         </div>
     );
 
