@@ -9,8 +9,7 @@ Content-Type: application/json
 }
 
 ###
-<<<<<<< HEAD
-=======
+
 
 GET {{backend_HostAddress}}/todoitems
 
@@ -36,4 +35,3 @@ Content-Type: application/json
 DELETE {{backend_HostAddress}}/todoitems/{{id}}
 
 ###
->>>>>>> 8835fec03fbca41fd7869e013b19b40608dc687e
