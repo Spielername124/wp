@@ -15,7 +15,6 @@ export default function TodoApp() {
     const handleAddTodo = async (e) => {
         e.preventDefault();
         if (!inputValue.trim()) return;
-
         const newTodo = {
             name: inputValue,
             isComplete: false
