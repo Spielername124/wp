@@ -1,11 +1,12 @@
 ﻿@backend_HostAddress = http://localhost:5186
 
-POST {{backend_HostAddress}}/todoitems
+POST {{backend_HostAddress}}/gameinfos/
 Content-Type: application/json
 
 {
-  "name":"walk dog",
-  "isComplete":true
+  "PlayerId": 1,
+  "OpponentId": 2,
+  "GameState" : "none"
 }
 
 ###
