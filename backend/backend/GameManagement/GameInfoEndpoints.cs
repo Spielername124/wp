@@ -7,17 +7,15 @@ public static class GameInfoEndpoints
 {
     public static void MapGameInfoEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("/gameinfos");
-        group.MapGet("/", GetAllGames);
+        var group = app.MapGroup("/gameinfo");
         group.MapPost("/", CreateNewGame);
+        group.MapGet("/", GetAllGames);
+        group.MapGet("/{GameId}", GetSpecificGame);
+        group.MapPut("/{GameId}", UpdateGameInfo);
+        group.MapDelete("/", DeleteEverything);
+        group.MapDelete("/{gameId}", DeleteGameInfo);
 
-    }
 
-    private static async Task<IResult> GetAllGames(IDbConnection db)
-    {
-        var games = await db.QueryAsync<GameInfo>(
-            "SELECT GameId, PlayerId, OpponentId, GameState FROM gameinfos");
-        return TypedResults.Ok(games);
     }
 
     private static async Task<IResult> CreateNewGame(GameInfo gameInfo, IDbConnection db)
@@ -27,5 +25,40 @@ public static class GameInfoEndpoints
             gameInfo);
 
         return TypedResults.Created($"/gameinfos/{gameInfo.GameId}", gameInfo);
+    }
+    private static async Task<IResult> GetAllGames(IDbConnection db)
+    {
+        var games = await db.QueryAsync<GameInfo>(
+            "SELECT GameId, PlayerId, OpponentId, GameState FROM gameinfos");
+        return TypedResults.Ok(games);
+    }
+    private static async Task<IResult> GetSpecificGame(int gameId, IDbConnection db)
+    {
+        var game  = await db.QueryFirstOrDefaultAsync<GameInfo>(
+            "SELECT GameId, PlayerId, OpponentId, GameState FROM gameinfos WHERE gameId = @GameId");
+        return game != null ? TypedResults.Ok(game): TypedResults.NotFound();
+    }
+    static async Task<IResult> UpdateGameInfo(int gameId, GameInfo inputGameInfo, IDbConnection db)
+    {
+        var rowsAffected = await db.ExecuteAsync(
+            "UPDATE gameinfos SET PlayerId = @PlayerId, OpponentId = @OpponentId, GameState = @GameState WHERE gameId = @GameId",
+            new { inputGameInfo.PlayerId, inputGameInfo.OpponentId, inputGameInfo.GameState, GameId = gameId });
+
+        return rowsAffected > 0 ? TypedResults.NoContent() : TypedResults.NotFound();
+    }
+    static async Task<IResult> DeleteGameInfo(int gameId, IDbConnection db)
+    {
+        var rowsAffected = await db.ExecuteAsync(
+            "DELETE FROM gameinfos WHERE gameId =@GameId", new { GameId = gameId });
+
+        return rowsAffected > 0 ? TypedResults.NoContent() : TypedResults.NotFound();
+    }
+
+    // For debuging only!  TODO: !Important! Remove before deploying
+    static async Task<IResult> DeleteEverything(IDbConnection db)
+    {
+        await db.ExecuteAsync("DELETE FROM gameinfos");
+        
+        return TypedResults.NoContent();
     }
 }
