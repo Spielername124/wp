@@ -7,12 +7,12 @@ namespace backend.GameManagement;
 public class GameInfo
 {
     [Key]
-    [Column("gameId")]
+    [Column("gameid")]
     public int GameId { get; set; }
-    [Column("playerId")]
+    [Column("playerid")]
     public int PlayerId { get; set; }
-    [Column("opponentId")]
+    [Column("opponentid")]
     public int OpponentId { get; set; }
-    [Column("gameState")]
+    [Column("gamestate")]
     public string GameState { get; set;} ="default"; 
 }

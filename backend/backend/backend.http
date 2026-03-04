@@ -1,6 +1,6 @@
 ﻿@backend_HostAddress = http://localhost:5186
 
-POST {{backend_HostAddress}}/gameinfos/
+POST {{backend_HostAddress}}/gameinfo/
 Content-Type: application/json
 
 {
@@ -12,27 +12,30 @@ Content-Type: application/json
 ###
 
 
-GET {{backend_HostAddress}}/todoitems
+GET {{backend_HostAddress}}/gameinfo
 
 ###
 
 @id=1
-GET {{backend_HostAddress}}/todoitems/{{id}}
+GET {{backend_HostAddress}}/gameinfo/{{id}}
 
 ###
 
-PUT {{backend_HostAddress}}/todoitems/{{id}}
+PUT {{backend_HostAddress}}/gameInfo/{{id}}
 Content-Type: application/json
 
 {
-  "id": 1,
-  "name": "feed fish",
-  "isComplete": false
+  "PlayerId" : 5,
+  "OpponentId": 1,
+  "GameState" : "two"
 }
 
 ###
 
 
-DELETE {{backend_HostAddress}}/todoitems/{{id}}
+DELETE {{backend_HostAddress}}/gameinfo/{{id}}
+
+###
+DELETE {{backend_HostAddress}}/gameinfo/
 
 ###
