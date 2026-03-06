@@ -4,31 +4,61 @@ import {useNavigate} from "react-router-dom";
 export default function GameSelector() {
     const navigate = useNavigate();
 
-    const handleJoinGame = () => {
-        // Beispiel-Daten, die Sie mitnehmen möchten
-        const GameInformation = {
-            gameID: 1,
-            playerID: 2,
-            OpponentID: 1,
-            createNewGame: false,
+    const handleJoinGame = async () => {
+        const id=1;
+        try {
+            const response = await fetch(`/backend/gameinfo/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
 
-        };
+            if (response.status === 404) {
+                console.error("Game not found.");
+                return;
+            }
 
-        // Navigation mit State-Übergabe
-        navigate('/chess', { state: GameInformation });
+            if (!response.ok) {
+                throw new Error(`Server-Error: ${response.status}`);
+            }
+
+            const gameData = await response.json();
+
+            navigate('/chess', { state: gameData });
+
+        } catch (error) {
+            console.error("Something went wrong :(", error);
+        }
+
     };
-    const handleCreateChessGame = () => {
-        // Beispiel-Daten, die Sie mitnehmen möchten
-        //TODO: Create new game in Backend, then join
-        const GameInformation = {
-            gameID: 1, //useless
-            playerID: 1,
-            OpponentID: 2,
-            createNewGame: true,
+    const handleCreateChessGame = async () => {
+        const newGame = {
+            playerId: 1,
+            opponentId: 2,
         };
 
-        // Navigation mit State-Übergabe
-        navigate('/chess', { state: GameInformation });
+        try {
+            const response = await fetch('/backend/gameinfo/', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newGame)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server-Error: ${response.status}`);
+            }
+
+            const gameData = await response.json();
+
+            navigate('/chess', { state: gameData });
+
+        } catch (error) {
+            console.error("Something went wrong :(", error);
+        }
     };
 
     return (

@@ -16,7 +16,7 @@ GET {{backend_HostAddress}}/gameinfo
 
 ###
 
-@id=6
+@id=1
 GET {{backend_HostAddress}}/gameinfo/{{id}}
 
 ###

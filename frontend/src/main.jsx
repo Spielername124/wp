@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import TTT  from './legacyJunk/ticTacToeFromTutorial.jsx'
 import "./style/styles.css";
-import Chess from "./chessIngame/assets/chess.jsx";
+import Chess from "./chessIngame/assets/Chess.jsx";
 import GameSelector from "./chessPregame/GameSelector.jsx";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
