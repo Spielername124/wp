@@ -29,20 +29,21 @@ public static class GameInfoEndpoints
     private static async Task<IResult> GetAllGames(IDbConnection db)
     {
         var games = await db.QueryAsync<GameInfo>(
-            "SELECT GameId, PlayerId, OpponentId, GameState FROM gameinfos");
+            "SELECT GameId, PlayerId, OpponentId, GameState, Turn, HasTerminated FROM gameinfos");
         return TypedResults.Ok(games);
     }
     private static async Task<IResult> GetSpecificGame(int gameId, IDbConnection db)
     {
         var game  = await db.QueryFirstOrDefaultAsync<GameInfo>(
-            "SELECT GameId, PlayerId, OpponentId, GameState FROM gameinfos WHERE gameId = @GameId");
+            "SELECT GameId, PlayerId, OpponentId, GameState, Turn, HasTerminated FROM gameinfos WHERE gameId = @GameId");
         return game != null ? TypedResults.Ok(game): TypedResults.NotFound();
     }
+    //Should acctually not be needed (?) since the gamestate cant directly be changed by the user
     static async Task<IResult> UpdateGameInfo(int gameId, GameInfo inputGameInfo, IDbConnection db)
     {
         var rowsAffected = await db.ExecuteAsync(
-            "UPDATE gameinfos SET PlayerId = @PlayerId, OpponentId = @OpponentId, GameState = @GameState WHERE gameId = @GameId",
-            new { inputGameInfo.PlayerId, inputGameInfo.OpponentId, inputGameInfo.GameState, GameId = gameId });
+            "UPDATE gameinfos SET PlayerId = @PlayerId, OpponentId = @OpponentId, GameState = @GameState, Turn = @Turn WHERE gameId = @GameId",
+            new { inputGameInfo.PlayerId, inputGameInfo.OpponentId, inputGameInfo.GameState, GameId = gameId, Turn = inputGameInfo.Turn+1});
 
         return rowsAffected > 0 ? TypedResults.NoContent() : TypedResults.NotFound();
     }
