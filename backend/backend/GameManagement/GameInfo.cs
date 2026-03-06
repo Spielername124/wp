@@ -14,5 +14,11 @@ public class GameInfo
     [Column("opponentid")]
     public int OpponentId { get; set; }
     [Column("gamestate")]
-    public string GameState { get; set;} ="default"; 
+    public string GameState { get; set;} ="default";
+
+    [Column("turn")] 
+    public int Turn { get; set; } = 0; // Shows how many turns have passed
+    
+    [Column("hasterminated")]
+    public bool HasTerminated { get; set; } = false;
 }
