@@ -1,85 +1,37 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
+using DbUp;
+using Microsoft.Extensions.Configuration;
+using System.Reflection;
+
+DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.WithOrigins("http://localhost:5173")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<TodoDb>(options =>
-    options.UseNpgsql(connectionString));
-
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 var app = builder.Build();
 
-app.UseCors();
+// 3. Datenbank-Migration mit DbUp
+var connectionString = app.Configuration.GetConnectionString("DefaultConnection");
 
-var todoItems = app.MapGroup("/todoitems");
+// Stellt sicher, dass die Datenbank auf dem Server existiert
+EnsureDatabase.For.PostgresqlDatabase(connectionString);
 
-todoItems.MapGet("/", GetAllTodos);
-todoItems.MapGet("/complete", GetCompleteTodos);
-todoItems.MapGet("/{id}", GetTodo);
-todoItems.MapPost("/", CreateTodo);
-todoItems.MapPut("/{id}", UpdateTodo);
-todoItems.MapDelete("/{id}", DeleteTodo);
+var upgrader = DeployChanges.To
+    .PostgresqlDatabase(connectionString)
+    .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
+    .LogToConsole()
+    .Build();
+
+var result = upgrader.PerformUpgrade();
+
+if (!result.Successful)
+{
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine($"Migration error: {result.Error}");
+    Console.ResetColor();
+    return; 
+}
+
+Console.WriteLine("Database is up to date.");
 
 app.Run();
-
-static async Task<IResult> GetAllTodos(TodoDb db)
-{
-    return TypedResults.Ok(await db.Todos.ToArrayAsync());
-}
-
-static async Task<IResult> GetCompleteTodos(TodoDb db)
-{
-    return TypedResults.Ok(await db.Todos.Where(t => t.IsComplete).ToListAsync());
-}
-
-static async Task<IResult> GetTodo(int id, TodoDb db)
-{
-    return await db.Todos.FindAsync(id)
-        is Todo todo
-            ? TypedResults.Ok(todo)
-            : TypedResults.NotFound();
-}
-
-static async Task<IResult> CreateTodo(Todo todo, TodoDb db)
-{
-    db.Todos.Add(todo);
-    await db.SaveChangesAsync();
-
-    return TypedResults.Created($"/todoitems/{todo.Id}", todo);
-}
-
-static async Task<IResult> UpdateTodo(int id, Todo inputTodo, TodoDb db)
-{
-    var todo = await db.Todos.FindAsync(id);
-
-    if (todo is null) return TypedResults.NotFound();
-
-    todo.Name = inputTodo.Name;
-    todo.IsComplete = inputTodo.IsComplete;
-
-    await db.SaveChangesAsync();
-
-    return TypedResults.NoContent();
-}
-
-static async Task<IResult> DeleteTodo(int id, TodoDb db)
-{
-    if (await db.Todos.FindAsync(id) is Todo todo)
-    {
-        db.Todos.Remove(todo);
-        await db.SaveChangesAsync();
-        return TypedResults.NoContent();
-    }
-
-    return TypedResults.NotFound();
-}
