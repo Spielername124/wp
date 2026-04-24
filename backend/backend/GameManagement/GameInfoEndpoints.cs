@@ -16,10 +16,10 @@ public static class GameInfoEndpoints
         group.MapGet("/", GetAllGames);
         group.MapGet("/{requestedGame}", GetSpecificGame);
         group.MapPut("/{requestedGame}", UpdateGameInfo);
-        /*
+        
         group.MapDelete("/", DeleteEverything);
-        group.MapDelete("/{gameId}", DeleteGameInfo);
-        */
+        group.MapDelete("/{gameToDelete}", DeleteGameInfo);
+        
     }
     
     private static async Task<IResult> CreateNewGame(GameInfo.GameInfo gameInfo, IDbConnection db)
@@ -68,6 +68,20 @@ public static class GameInfoEndpoints
             });
 
         return rowsAffected > 0 ? TypedResults.NoContent() : TypedResults.NotFound();
+    }
+    
+    static async Task<IResult> DeleteGameInfo(int gameToDelete, IDbConnection db)
+    {
+        var rowsAffected = await db.ExecuteAsync(
+            "DELETE FROM game_info WHERE game_id =@GameId", new { GameId = gameToDelete });
+
+        return rowsAffected > 0 ? TypedResults.NoContent() : TypedResults.NotFound();
+    }
+    static async Task<IResult> DeleteEverything(IDbConnection db)
+    {
+        await db.ExecuteAsync("DELETE FROM game_info");
+        
+        return TypedResults.NoContent();
     }
     
     
