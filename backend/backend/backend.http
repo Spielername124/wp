@@ -1,0 +1,49 @@
+﻿@backend_HostAddress = http://localhost:5000
+
+POST {{backend_HostAddress}}/gameinfo/
+Content-Type: application/json
+
+{
+  "Player1Id": 1,
+  "Player2Id": 2
+}
+
+###
+
+
+GET {{backend_HostAddress}}/gameinfo
+
+###
+
+@id=1
+GET {{backend_HostAddress}}/gameinfo/{{id}}
+
+###
+
+PUT {{backend_HostAddress}}/gameInfo/{{id}}
+Content-Type: application/json
+
+{
+  "WPawn" : 65280,
+  "WKnight" : 66,
+  "WBishop" : 36,
+  "WRook" : 129,
+  "WQueen" : 16,
+  "WKing" : 8,
+  "BPawn" : 71776119061217280,
+  "BKnight" : 4755801206503243776,
+  "BBishop" : 2594073385365405696,
+  "BRook" : -915131442816847872,
+  "BQueen" : 1152921504606846976,
+  "BKing" : 576460752303423488
+}
+
+###
+
+
+DELETE {{backend_HostAddress}}/gameinfo/{{id}}
+
+###
+DELETE {{backend_HostAddress}}/gameinfo/
+
+###
