@@ -34,8 +34,13 @@ export default function GameSelector() {
     };
     const handleCreateChessGame = async () => {
         const newGame = {
+<<<<<<< HEAD
             playerId: 1,
             opponentId: 2,
+=======
+            Player1Id: 1,
+            Player2Id: 2,
+>>>>>>> 463f711bf444ae5d3bddb97621b049f9f2973bc0
         };
 
         try {

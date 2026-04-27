@@ -16,7 +16,6 @@ public static class GameInfoEndpoints
         group.MapGet("/", GetAllGames);
         group.MapGet("/{requestedGame}", GetSpecificGame);
         group.MapPut("/{requestedGame}", UpdateGameInfo);
-        
         group.MapDelete("/", DeleteEverything);
         group.MapDelete("/{gameToDelete}", DeleteGameInfo);
         
