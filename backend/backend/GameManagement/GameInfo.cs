@@ -8,17 +8,17 @@ public class GameInfo
     public int TurnCounter { get; set; }
     public bool HasTerminated { get; set; }
     
-    public long WPawn { get; set; }
-    public long WKnight { get; set; }
-    public long WBishop { get; set; }
-    public long WRook { get; set; }
-    public long WQueen { get; set; }
-    public long WKing { get; set; }
+    public ulong WPawn { get; set; }
+    public ulong WKnight { get; set; }
+    public ulong WBishop { get; set; }
+    public ulong WRook { get; set; }
+    public ulong WQueen { get; set; }
+    public ulong WKing { get; set; }
 
-    public long BPawn { get; set; }
-    public long BKnight { get; set; }
-    public long BBishop { get; set; }
-    public long BRook { get; set; }
-    public long BQueen { get; set; }
-    public long BKing { get; set; }
+    public ulong BPawn { get; set; }
+    public ulong BKnight { get; set; }
+    public ulong BBishop { get; set; }
+    public ulong BRook { get; set; }
+    public ulong BQueen { get; set; }
+    public ulong BKing { get; set; }
 }
