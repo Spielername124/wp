@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using backend.GameManagement.GameLogic;
 using Dapper;
 namespace backend.GameManagement;
 
@@ -12,8 +13,14 @@ public static class MoveEndpoints
         group.MapGet("/{requestedGame}/last", GetLast);
     }
 
-    private static void ValidateAndCreateMove()
+    private static async Task<IResult> ValidateAndCreateMove(Move move, IDbConnection db)
     {
+        var gameState = await db.QueryFirstOrDefaultAsync<backend.GameManagement.GameInfo>(
+            "SELECT * FROM game_info WHERE game_id = @GameId", 
+            new { GameId = move.GameId });
+        if (gameState == null) return TypedResults.NotFound();
+        if(MoveValidation.ValidateMove(move, gameState)) return TypedResults.Ok();
+        return TypedResults.UnprocessableEntity();
     }
 
     

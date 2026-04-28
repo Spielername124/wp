@@ -1,4 +1,4 @@
-﻿namespace backend.GameInfo;
+﻿namespace backend.GameManagement;
 
 public class GameInfo
 {
