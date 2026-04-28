@@ -48,5 +48,6 @@ Console.WriteLine("Database is up to date.");
 app.UseCors();
 
 app.MapGameInfoEndpoints();
+app.MapMoveEndpoints();
 
 app.Run();
