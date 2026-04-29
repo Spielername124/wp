@@ -1,5 +1,6 @@
 ﻿namespace backend.GameManagement;
 
+//TODO: If bored, rename GameInfo to GameState
 public class GameInfo
 {
     public int GameId { get; set; }

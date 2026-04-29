@@ -20,9 +20,19 @@ public static class MoveEndpoints
             "SELECT * FROM game_info WHERE game_id = @GameId", 
             new { GameId = move.GameId });
         if (gameState == null) return TypedResults.NotFound();
-        if(MoveValidation.ValidateMove(move, gameState)) return TypedResults.Ok();
+        if (MoveValidation.ValidateMove(move, gameState))
+        {
+            MoveExecution.ExecuteMove(gameState, move);
+            //TODO: write the gamestate to the db
+            //TODO: Check if the game ends (Check mate/ Remis) and give acording response (including draw by repeated moves)
+            return TypedResults.Ok();
+        }
+        
+        //reject move if invalid
         return TypedResults.UnprocessableEntity();
     }
+
+    
 
     
     private static async Task<IResult> GetHistory(int requestedGame, IDbConnection db)

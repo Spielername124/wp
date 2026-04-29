@@ -17,6 +17,8 @@ public static class MoveValidation
              BitBoardHelper.GetColorsBoard(gameInfo, move.MovingPlayer)
             ) != 0
         ) return false;
+        // TODO: reject move if moving player is check after moving
+        
         
         return true;
     }

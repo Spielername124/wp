@@ -11,25 +11,22 @@ public static class BitBoardHelper
 
     public static ulong GetPieceBitboard(GameInfo gameInfo, char type, bool color)
     {
-        if (color)
+        return (color, type) switch
         {
-            if (type == 'p') return gameInfo.WPawn;
-            if (type == 'r') return gameInfo.WRook;
-            if (type == 'h') return gameInfo.WKnight;
-            if (type == 'b') return gameInfo.WBishop;
-            if (type == 'q') return gameInfo.WQueen;
-            if (type == 'k') return gameInfo.WKing;
-        }
-        else
-        {
-            if (type == 'p') return gameInfo.BPawn;
-            if (type == 'r') return gameInfo.BRook;
-            if (type == 'h') return gameInfo.BKnight;
-            if (type == 'b') return gameInfo.BBishop;
-            if (type == 'q') return gameInfo.BQueen;
-            if (type == 'k') return gameInfo.BKing;
-        }
-        throw new InvalidDataException();
+            (true, 'p') => gameInfo.WPawn,
+            (true, 'r') => gameInfo.WRook,
+            (true, 'h') => gameInfo.WKnight,
+            (true, 'b') => gameInfo.WBishop,
+            (true, 'q') => gameInfo.WQueen,
+            (true, 'k') => gameInfo.WKing,
+            (false, 'p') => gameInfo.BPawn,
+            (false, 'r') => gameInfo.BRook,
+            (false, 'h') => gameInfo.BKnight,
+            (false, 'b') => gameInfo.BBishop,
+            (false, 'q') => gameInfo.BQueen,
+            (false, 'k') => gameInfo.BKing,
+            _ => throw new ArgumentException()
+        };
     }
 
     public static ulong GetColorsBoard(GameInfo gameInfo, bool color)
