@@ -5,6 +5,7 @@ namespace backend.GameManagement;
 
 public static class MoveEndpoints
 {
+    //TODO Frontent needs to convert to little endian for communications
     public static void MapMoveEndpoints(this WebApplication app)
     {
         var group = app.MapGroup("/game");
