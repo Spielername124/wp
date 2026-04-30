@@ -14,7 +14,26 @@ public static class MoveExecution
 
         if (IsRochade(gameInfo, move))
         {
-            //TODO
+            switch (move.MovingPlayer, move.TargetedField)
+            {
+                case(true,2):
+                    MovePiece(gameInfo, 'k', true, move.OriginField, move.TargetedField);
+                    MovePiece(gameInfo, 'r', true, 0, move.TargetedField+1);
+                    break;
+                case(true,6): 
+                    MovePiece(gameInfo, 'k', true, move.OriginField, move.TargetedField);
+                    MovePiece(gameInfo, 'r', true, 7, move.TargetedField-1);
+                    break;
+                
+                case(false,58): 
+                    MovePiece(gameInfo, 'k', false, move.OriginField, move.TargetedField);
+                    MovePiece(gameInfo, 'r', false, 56, move.TargetedField+1);
+                    break;
+                case(false,62): 
+                    MovePiece(gameInfo, 'k', false, move.OriginField, move.TargetedField);
+                    MovePiece(gameInfo, 'r', false, 63, move.TargetedField-1);
+                    break;
+            }
             return;
         }
         // deletes the piece at the prior location and creats a new one at the new location

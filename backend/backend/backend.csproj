@@ -22,6 +22,8 @@
         <EmbeddedResource Include="Scripts\0004_FixDefaultsByMakingSignedValues.sql" />
         <None Remove="Scripts\0005_CreateMoveTable.sql" />
         <EmbeddedResource Include="Scripts\0005_CreateMoveTable.sql" />
+        <None Remove="Scripts\0006_FixDefaultsAgain.sql" />
+        <EmbeddedResource Include="Scripts\0006_FixDefaultsAgain.sql" />
     </ItemGroup>
 
 </Project>
