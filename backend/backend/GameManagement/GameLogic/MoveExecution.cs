@@ -1,4 +1,5 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using System.ComponentModel;
+using System.Reflection.Metadata.Ecma335;
 
 namespace backend.GameManagement.GameLogic;
 
@@ -6,9 +7,15 @@ public static class MoveExecution
 {
     public static void ExecuteMove(GameInfo gameInfo, Move move)
     {
-        if (IsPawnPromotion(gameInfo, move))
+        if (IsPawnPromotion(move.MovingPlayer,move.TargetedField))
         {
-            //TODO
+            //TODO implement the type for creation in Move, and poll it here.
+            char type = 'q';
+            if (type == null) throw new InvalidEnumArgumentException();
+            
+            DeletePiece(gameInfo, !move.MovingPlayer, move.TargetedField);
+            DeletePiece(gameInfo, !move.MovingPlayer, move.OriginField);
+            SpawnPiece(gameInfo, type, move.MovingPlayer,move.TargetedField);
             return;
         }
 
@@ -51,13 +58,20 @@ public static class MoveExecution
         return false;
     }
     
-    private static bool IsPawnPromotion(GameInfo gameInfo, Move move)
+    private static bool IsPawnPromotion( bool color, int index)
     {
-        //TODO
-        return false;
+        return (color) switch
+        {
+            // tests if the (potential) white pawn is now on the other siede of the board
+            (true) => (BitBoardHelper.BitBoardOnIndex(index)& (ulong) 72057594037927936) != 0,
+            
+            // tests if the (potential) black pawn is on the other side of the board
+            (false) => (BitBoardHelper.BitBoardOnIndex(index)& (ulong) 128) != 0,
+        };
     }
 
     private static bool IsEnPassant(GameInfo gameInfo, Move move)
+        //TODO add Bitboard to GameInfo which contains TargetIndexes that are en passantable.
     {
         return false;
     }
@@ -90,18 +104,36 @@ public static class MoveExecution
         ulong moveMask= BitBoardHelper.BitBoardOnIndex(originField) | BitBoardHelper.BitBoardOnIndex(targetedField);
         _ = (color, type) switch
         {
-            (true, 'p') => gameInfo.WPawn ^= moveMask,
             (true, 'r') => gameInfo.WRook ^= moveMask,
             (true, 'h') => gameInfo.WKnight ^= moveMask,
             (true, 'b') => gameInfo.WBishop ^= moveMask,
             (true, 'q') => gameInfo.WQueen ^= moveMask,
-            (true, 'k') => gameInfo.WKing ^= moveMask,
-            (false, 'p') => gameInfo.BPawn ^= moveMask,
+            
             (false, 'r') => gameInfo.BRook ^= moveMask,
             (false, 'h') => gameInfo.BKnight ^= moveMask,
             (false, 'b') => gameInfo.BBishop ^= moveMask,
             (false, 'q') => gameInfo.BQueen ^= moveMask,
-            (false, 'k') => gameInfo.BKing ^= moveMask,
+            _ => throw new ArgumentException()
+        };
+    }
+
+    internal static void SpawnPiece(GameInfo gameInfo, char type, bool color, int index)
+    {
+        ulong spawnMask = BitBoardHelper.BitBoardOnIndex(index);
+        _ = (color, type) switch
+        {
+            (true, 'p') => gameInfo.WPawn |= spawnMask,
+            (true, 'r') => gameInfo.WRook |= spawnMask,
+            (true, 'h') => gameInfo.WKnight |= spawnMask,
+            (true, 'b') => gameInfo.WBishop |= spawnMask,
+            (true, 'q') => gameInfo.WQueen |= spawnMask,
+            (true, 'k') => gameInfo.WKing |= spawnMask,
+            (false, 'p') => gameInfo.BPawn |= spawnMask,
+            (false, 'r') => gameInfo.BRook |= spawnMask,
+            (false, 'h') => gameInfo.BKnight |= spawnMask,
+            (false, 'b') => gameInfo.BBishop |= spawnMask,
+            (false, 'q') => gameInfo.BQueen |= spawnMask,
+            (false, 'k') => gameInfo.BKing |= spawnMask,
             _ => throw new ArgumentException()
         };
     }
