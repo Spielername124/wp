@@ -12,6 +12,8 @@ public static class MoveExecution
             return;
         }
 
+        if (IsEnPassant(gameInfo, move)) ;
+        
         if (IsRochade(gameInfo, move))
         {
             switch (move.MovingPlayer, move.TargetedField)
@@ -55,27 +57,31 @@ public static class MoveExecution
         return false;
     }
 
+    private static bool IsEnPassant(GameInfo gameInfo, Move move)
+    {
+        return false;
+    }
+
     private static void DeletePiece(GameInfo gameInfo, bool color, int index)
     {
-        ulong toRemoveBitboard = BitBoardHelper.BitBoardOnIndex(index);
-
+        ulong toRemoveBitboard = ~(BitBoardHelper.BitBoardOnIndex(index));
         if (color)
         {
-            gameInfo.WPawn &= ~toRemoveBitboard;
-            gameInfo.WRook &= ~toRemoveBitboard;
-            gameInfo.WKnight &= ~toRemoveBitboard;
-            gameInfo.WBishop &= ~toRemoveBitboard;
-            gameInfo.WQueen &= ~toRemoveBitboard;
-            gameInfo.WKing &= ~toRemoveBitboard;
+            gameInfo.WPawn &= toRemoveBitboard;
+            gameInfo.WRook &= toRemoveBitboard;
+            gameInfo.WKnight &= toRemoveBitboard;
+            gameInfo.WBishop &= toRemoveBitboard;
+            gameInfo.WQueen &= toRemoveBitboard;
+            gameInfo.WKing &= toRemoveBitboard;
         }
         else
         {
-            gameInfo.BPawn &= ~toRemoveBitboard;
-            gameInfo.BRook &= ~toRemoveBitboard;
-            gameInfo.BKnight &= ~toRemoveBitboard;
-            gameInfo.BBishop &= ~toRemoveBitboard;
-            gameInfo.BQueen &= ~toRemoveBitboard;
-            gameInfo.BKing &= ~toRemoveBitboard;
+            gameInfo.BPawn &= toRemoveBitboard;
+            gameInfo.BRook &= toRemoveBitboard;
+            gameInfo.BKnight &= toRemoveBitboard;
+            gameInfo.BBishop &= toRemoveBitboard;
+            gameInfo.BQueen &= toRemoveBitboard;
+            gameInfo.BKing &= toRemoveBitboard;
         }
     }
 

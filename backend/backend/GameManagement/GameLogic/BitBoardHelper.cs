@@ -49,4 +49,25 @@ public static class BitBoardHelper
                );
 
     }
+    
+    internal static ulong GetFullBoard(GameInfo gameInfo)
+    {
+        return (
+            gameInfo.WPawn |
+            gameInfo.WRook |
+            gameInfo.WKing |
+            gameInfo.WBishop |
+            gameInfo.WQueen |
+            gameInfo.WKing |
+            gameInfo.BPawn |
+            gameInfo.BRook |
+            gameInfo.BKing |
+            gameInfo.BBishop |
+            gameInfo.BQueen |
+            gameInfo.BKing
+            );
+    }
+    
 }
+
+    
