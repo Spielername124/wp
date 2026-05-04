@@ -63,10 +63,10 @@ public static class MoveExecution
         return (color) switch
         {
             // tests if the (potential) white pawn is now on the other siede of the board
-            (true) => (BitBoardHelper.BitBoardOnIndex(index)& (ulong) 72057594037927936) != 0,
+            (true) => (GeneralBitBoardHelper.BitBoardOnIndex(index)& (ulong) 72057594037927936) != 0,
             
             // tests if the (potential) black pawn is on the other side of the board
-            (false) => (BitBoardHelper.BitBoardOnIndex(index)& (ulong) 128) != 0,
+            (false) => (GeneralBitBoardHelper.BitBoardOnIndex(index)& (ulong) 128) != 0,
         };
     }
 
@@ -78,7 +78,7 @@ public static class MoveExecution
 
     private static void DeletePiece(GameInfo gameInfo, bool color, int index)
     {
-        ulong toRemoveBitboard = ~(BitBoardHelper.BitBoardOnIndex(index));
+        ulong toRemoveBitboard = ~(GeneralBitBoardHelper.BitBoardOnIndex(index));
         if (color)
         {
             gameInfo.WPawn &= toRemoveBitboard;
@@ -101,7 +101,7 @@ public static class MoveExecution
 
     private static void MovePiece(GameInfo gameInfo, char type, bool color, int originField, int targetedField)
     {
-        ulong moveMask= BitBoardHelper.BitBoardOnIndex(originField) | BitBoardHelper.BitBoardOnIndex(targetedField);
+        ulong moveMask= GeneralBitBoardHelper.BitBoardOnIndex(originField) | GeneralBitBoardHelper.BitBoardOnIndex(targetedField);
         _ = (color, type) switch
         {
             (true, 'r') => gameInfo.WRook ^= moveMask,
@@ -119,7 +119,7 @@ public static class MoveExecution
 
     internal static void SpawnPiece(GameInfo gameInfo, char type, bool color, int index)
     {
-        ulong spawnMask = BitBoardHelper.BitBoardOnIndex(index);
+        ulong spawnMask = GeneralBitBoardHelper.BitBoardOnIndex(index);
         _ = (color, type) switch
         {
             (true, 'p') => gameInfo.WPawn |= spawnMask,

@@ -10,8 +10,8 @@ internal static class PawnValidation
         if (originField % 8 == targetField)
         {
             //Check if the targeted loaction is already occupied by an enemy, making the move invalid
-            ulong enemyTable = BitBoardHelper.GetColorsBoard(gameinfo, !color);
-            if((BitBoardHelper.BitBoardOnIndex(targetField)& enemyTable) !=0) return false;
+            ulong enemyTable = GeneralBitBoardHelper.GetColorsBoard(gameinfo, !color);
+            if((GeneralBitBoardHelper.BitBoardOnIndex(targetField)& enemyTable) !=0) return false;
             
             int offset = targetField - originField;
             return (color, offset) switch
@@ -30,7 +30,7 @@ internal static class PawnValidation
         {
             //TODO add Bitboard to GameInfo which contains TargetIndexes that are en passantable. 
             ulong mockEnPassantableTable = 0;
-            ulong enemyTable = mockEnPassantableTable | BitBoardHelper.GetColorsBoard(gameinfo, !color);
+            ulong enemyTable = mockEnPassantableTable | GeneralBitBoardHelper.GetColorsBoard(gameinfo, !color);
             
             int offset = targetField- originField;
             
@@ -40,7 +40,7 @@ internal static class PawnValidation
                 (!color && (offset == -7 || offset == -9))))
                 return false;
             //returns true if the moves captures a piece (--> makes the move valid) 
-            return ((enemyTable & BitBoardHelper.BitBoardOnIndex(targetField)) != 0);
+            return ((enemyTable & GeneralBitBoardHelper.BitBoardOnIndex(targetField)) != 0);
         }
     }
 
@@ -48,8 +48,8 @@ internal static class PawnValidation
     {
         return (color) switch
         {
-            (true) => (BitBoardHelper.BitBoardOnIndex(originField)& gameInfo.WPawn) != 0,
-            (false) => (BitBoardHelper.BitBoardOnIndex(originField) & gameInfo.BPawn) != 0
+            (true) => (GeneralBitBoardHelper.BitBoardOnIndex(originField)& gameInfo.WPawn) != 0,
+            (false) => (GeneralBitBoardHelper.BitBoardOnIndex(originField) & gameInfo.BPawn) != 0
         };
     }
     

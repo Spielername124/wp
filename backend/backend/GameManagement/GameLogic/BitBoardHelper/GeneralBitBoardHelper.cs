@@ -1,6 +1,6 @@
 ﻿namespace backend.GameManagement.GameLogic;
 
-public static class BitBoardHelper
+public static class GeneralBitBoardHelper
 {
     
     public static ulong BitBoardOnIndex(int index)
