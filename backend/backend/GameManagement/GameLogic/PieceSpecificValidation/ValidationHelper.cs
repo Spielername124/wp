@@ -1,9 +1,9 @@
 ﻿namespace backend.GameManagement.GameLogic.PieceSpecificValidation;
 
-internal class ValidationHelper
+internal static class ValidationHelper
 {
     // Checks if two indices are on a diagonal and that there are no pieces between the indices, blocking the LOS
-    internal static bool ValidateDiagonalLineOfSight(GameInfo gameInfo, int originField, int targetField)
+    internal static bool IsValidDiagonalMove(GameInfo gameInfo, int originField, int targetField)
     {
         //Get friend and foe pieces
         ulong fullBitboard = GeneralBitBoardHelper.GetFullBoard(gameInfo);
@@ -15,7 +15,7 @@ internal class ValidationHelper
             (fullBitboard & BitBoardPreCalculation.LOSBitboardArray[originField,targetField])==0);
     }
 
-    internal static bool ValidateVerticalLineOfSight(GameInfo gameInfo, int originField, int targetField)
+    internal static bool IsValidVerticalMove(GameInfo gameInfo, int originField, int targetField)
     {
         //Get friend and foe pieces
         ulong fullBitboard = GeneralBitBoardHelper.GetFullBoard(gameInfo);
@@ -27,7 +27,7 @@ internal class ValidationHelper
              (fullBitboard & BitBoardPreCalculation.LOSBitboardArray[originField,targetField])==0);
     }
     
-    internal static bool ValidateHorizontalLineOfSight(GameInfo gameInfo, int originField, int targetField)
+    internal static bool IsValidHorizontalMove(GameInfo gameInfo, int originField, int targetField)
     {
         //Get friend and foe pieces
         ulong fullBitboard = GeneralBitBoardHelper.GetFullBoard(gameInfo);

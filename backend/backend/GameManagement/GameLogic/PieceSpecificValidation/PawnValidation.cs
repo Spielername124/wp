@@ -4,6 +4,7 @@ namespace backend.GameManagement.GameLogic.PieceSpecificValidation;
 
 internal static class PawnValidation
 {
+    //TODO rewrite it with pre-calculated Bitboards
     internal static bool ValidatePawn(GameInfo gameinfo, int originField, int targetField, bool color)
     {
         //vertical moves
@@ -18,10 +19,10 @@ internal static class PawnValidation
             {
                 (true, 8) => true,
                 (true, 16) 
-                    => ValidationHelper.ValidateVerticalLineOfSight(gameinfo, originField, targetField) && PawnHasNotMovedYet(gameinfo, originField, color),
+                    => ValidationHelper.IsValidVerticalMove(gameinfo, originField, targetField) && PawnHasNotMovedYet(gameinfo, originField, color),
                 (false, -8) => true,
                 (false, -16) 
-                    => ValidationHelper.ValidateVerticalLineOfSight(gameinfo, originField, targetField) && PawnHasNotMovedYet(gameinfo, originField, color),
+                    => ValidationHelper.IsValidVerticalMove(gameinfo, originField, targetField) && PawnHasNotMovedYet(gameinfo, originField, color),
                 _ => false
             };
         }

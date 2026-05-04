@@ -3,7 +3,8 @@
 //TODO: If bored, rename GameInfo to GameState
 public class GameInfo
 {
-    //TODO add Bitboard to GameInfo which contains TargetIndexes that are en passantable 
+    //TODO add Bitboard to GameInfo which contains TargetIndexes that are en passantable
+    //TODO add Bitboard of rooks and pawns that have not moved jet.
     public int GameId { get; set; }
     public int? Player1Id { get; set; }
     public int? Player2Id { get; set; }
