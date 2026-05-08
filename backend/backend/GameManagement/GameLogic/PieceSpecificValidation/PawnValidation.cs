@@ -17,6 +17,7 @@ internal static class PawnValidation
             int offset = targetField - originField;
             return (color, offset) switch
             {
+                //TODO While rewriting this, prevent out of loop overs.
                 (true, 8) => true,
                 (true, 16) 
                     => ValidationHelper.IsValidVerticalMove(gameinfo, originField, targetField) && PawnHasNotMovedYet(gameinfo, originField, color),

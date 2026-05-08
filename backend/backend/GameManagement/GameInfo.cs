@@ -5,6 +5,11 @@ public class GameInfo
 {
     //TODO add Bitboard to GameInfo which contains TargetIndexes that are en passantable
     //TODO add Bitboard of rooks and pawns that have not moved jet.
+    
+    /* TODO add BlackBoard / WhiteBoard bitboards and use them in the backend
+            add fullOcoupancy board and use it in the backend
+     
+     */
     public int GameId { get; set; }
     public int? Player1Id { get; set; }
     public int? Player2Id { get; set; }
