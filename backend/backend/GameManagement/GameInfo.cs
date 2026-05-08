@@ -8,7 +8,6 @@ public class GameInfo
     
     /* TODO add BlackBoard / WhiteBoard bitboards and use them in the backend
             add fullOcoupancy board and use it in the backend
-     
      */
     public int GameId { get; set; }
     public int? Player1Id { get; set; }
@@ -22,11 +21,15 @@ public class GameInfo
     public ulong WRook { get; set; }
     public ulong WQueen { get; set; }
     public ulong WKing { get; set; }
-
     public ulong BPawn { get; set; }
     public ulong BKnight { get; set; }
     public ulong BBishop { get; set; }
     public ulong BRook { get; set; }
     public ulong BQueen { get; set; }
     public ulong BKing { get; set; }
+    public ulong FullBitBoard { get; set; }
+    public ulong BlackBitBoard { get; set; }
+    public ulong WhiteBitBoard { get; set; }
+    public ulong HasNotMoved { get; set; }
+    public ulong EnPassantVulnerable {set;get;}
 }

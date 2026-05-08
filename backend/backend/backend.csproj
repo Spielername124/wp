@@ -24,6 +24,10 @@
         <EmbeddedResource Include="Scripts\0005_CreateMoveTable.sql" />
         <None Remove="Scripts\0006_FixDefaultsAgain.sql" />
         <EmbeddedResource Include="Scripts\0006_FixDefaultsAgain.sql" />
+        <None Remove="Scripts\0007_AddingMoreBitBoards.sql" />
+        <EmbeddedResource Include="Scripts\0007_AddingMoreBitBoards.sql" />
+        <None Remove="Scripts\0008_AddingPromotionOptions.sql" />
+        <EmbeddedResource Include="Scripts\0008_AddingPromotionOptions.sql" />
     </ItemGroup>
 
 </Project>

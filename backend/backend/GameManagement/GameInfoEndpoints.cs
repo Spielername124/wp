@@ -48,8 +48,27 @@ public static class GameInfoEndpoints
     static async Task<IResult> UpdateGameInfo(int requestedGame, GameInfo inputGameInfo, IDbConnection db)
     {
         var rowsAffected = await db.ExecuteAsync(
-            "UPDATE game_info SET turn_counter = turn_counter+1 , w_pawn = @WPawn, w_knight = @WKnight, w_bishop = @WBishop, w_rook = @WRook, w_queen = @WQueen, w_king = @WKing, b_pawn = @BPawn, b_knight = @BKnight, b_bishop = @BBishop, b_rook = @BRook, b_queen = @BQueen, b_king = @BKing WHERE game_id = @GameId",
-            
+            @"UPDATE game_info SET 
+        turn_counter = turn_counter + 1, 
+        w_pawn = @WPawn, 
+        w_knight = @WKnight, 
+        w_bishop = @WBishop, 
+        w_rook = @WRook, 
+        w_queen = @WQueen, 
+        w_king = @WKing, 
+        b_pawn = @BPawn, 
+        b_knight = @BKnight, 
+        b_bishop = @BBishop, 
+        b_rook = @BRook, 
+        b_queen = @BQueen, 
+        b_king = @BKing,
+        full_bit_board = @FullBitBoard,
+        white_bit_board = @WhiteBitBoard,
+        black_bit_board = @BlackBitBoard,
+        has_not_moved = @HasNotMoved,
+        en_passant_vulnerable = @EnPassantVulnerable
+    WHERE game_id = @GameId",
+    
             new { 
                 GameId = requestedGame,
                 inputGameInfo.WPawn, 
@@ -63,7 +82,12 @@ public static class GameInfoEndpoints
                 inputGameInfo.BBishop, 
                 inputGameInfo.BRook, 
                 inputGameInfo.BQueen, 
-                inputGameInfo.BKing, 
+                inputGameInfo.BKing,
+                inputGameInfo.FullBitBoard,
+                inputGameInfo.WhiteBitBoard,
+                inputGameInfo.BlackBitBoard,
+                inputGameInfo.HasNotMoved,
+                inputGameInfo.EnPassantVulnerable
             });
 
         return rowsAffected > 0 ? TypedResults.NoContent() : TypedResults.NotFound();
