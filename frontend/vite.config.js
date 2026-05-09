@@ -7,14 +7,11 @@ export default defineConfig({
     server: {
         proxy: {
             '/backend': {
-<<<<<<< HEAD
                 target: 'http://localhost:5186',
-=======
                 target: 'http://localhost:5000',
->>>>>>> 463f711bf444ae5d3bddb97621b049f9f2973bc0
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/backend/, ''),
             },
-        },
+        }
     },
 })
