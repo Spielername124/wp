@@ -27,16 +27,16 @@ internal class KingValidation
             
             (true, 4, 2) => 
                 ((mockHasNotMoved ^ GeneralBitBoardHelper.BitBoardOnIndex(0)) |
-               (GeneralBitBoardHelper.GetFullBoard(gameInfo)& BitBoardPreCalculation.LOSBitboardArray[4,0]))==0,
+               (gameInfo.FullBitBoard & BitBoardPreCalculation.LOSBitboardArray[4,0]))==0,
             (true, 4, 6) => 
                 ((mockHasNotMoved & GeneralBitBoardHelper.BitBoardOnIndex(7)) |
-                (GeneralBitBoardHelper.GetFullBoard(gameInfo)& BitBoardPreCalculation.LOSBitboardArray[4,7]))==0,
+                (gameInfo.FullBitBoard& BitBoardPreCalculation.LOSBitboardArray[4,7]))==0,
             (false, 60, 58) => 
                 ((mockHasNotMoved & GeneralBitBoardHelper.BitBoardOnIndex(56)) |
-                 (GeneralBitBoardHelper.GetFullBoard(gameInfo)& BitBoardPreCalculation.LOSBitboardArray[60,56]))==0,
+                 (gameInfo.FullBitBoard& BitBoardPreCalculation.LOSBitboardArray[60,56]))==0,
             (false, 60, 62) => 
                 ((mockHasNotMoved & GeneralBitBoardHelper.BitBoardOnIndex(63)) |
-                (GeneralBitBoardHelper.GetFullBoard(gameInfo)& BitBoardPreCalculation.LOSBitboardArray[60,63]))==0,
+                (gameInfo.FullBitBoard& BitBoardPreCalculation.LOSBitboardArray[60,63]))==0,
             _ => false,
         };
     }

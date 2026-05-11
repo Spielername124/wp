@@ -2,24 +2,22 @@
 using System.Reflection.Metadata.Ecma335;
 
 namespace backend.GameManagement.GameLogic;
-
+//IMPORTANT: Always remove pieces on capture before moving the new piece.
 public static class MoveExecution
 {
     public static void ExecuteMove(GameInfo gameInfo, Move move)
     {
         if (IsPawnPromotion(move.MovingPlayer,move.TargetedField))
         {
-            //TODO implement the type for creation in Move, and poll it here.
-            char type = 'q';
-            if (type == null) throw new InvalidEnumArgumentException();
+            if (move.PromotionType == null) throw new InvalidEnumArgumentException();
             
             DeletePiece(gameInfo, !move.MovingPlayer, move.TargetedField);
             DeletePiece(gameInfo, !move.MovingPlayer, move.OriginField);
-            SpawnPiece(gameInfo, type, move.MovingPlayer,move.TargetedField);
+            SpawnPiece(gameInfo, move.PromotionType.Value, move.MovingPlayer,move.TargetedField);
             return;
         }
 
-        if (IsEnPassant(gameInfo, move)) ;
+        if (IsEnPassant(gameInfo, move));
         
         if (IsRochade(gameInfo, move))
         {
@@ -45,11 +43,10 @@ public static class MoveExecution
             }
             return;
         }
-        // deletes the piece at the prior location and creats a new one at the new location
-        MovePiece(gameInfo, move.MovingPieceType,move.MovingPlayer,move.OriginField,move.TargetedField);
-        
         //If there exists an enemy on the Square, it gets deleted, else nothing happens
         DeletePiece(gameInfo, !move.MovingPlayer, move.TargetedField);
+        // deletes the piece at the prior location and create a new one at the new location
+        MovePiece(gameInfo, move.MovingPieceType,move.MovingPlayer,move.OriginField,move.TargetedField);
     }
     
     private static bool IsRochade(GameInfo gameInfo, Move move)
@@ -71,7 +68,8 @@ public static class MoveExecution
     }
 
     private static bool IsEnPassant(GameInfo gameInfo, Move move)
-        //TODO add Bitboard to GameInfo which contains TargetIndexes that are en passantable.
+        /*TODO Implement usage of the IsEnpassantableBitboard -> this method, the if statement and write
+         the new Bitboard that will exist after the turn*/
     {
         return false;
     }
@@ -81,21 +79,29 @@ public static class MoveExecution
         ulong toRemoveBitboard = ~(GeneralBitBoardHelper.BitBoardOnIndex(index));
         if (color)
         {
+            //remove the piece in all specific Boards
             gameInfo.WPawn &= toRemoveBitboard;
             gameInfo.WRook &= toRemoveBitboard;
             gameInfo.WKnight &= toRemoveBitboard;
             gameInfo.WBishop &= toRemoveBitboard;
             gameInfo.WQueen &= toRemoveBitboard;
             gameInfo.WKing &= toRemoveBitboard;
+            //remove the piece on the redundant Boards
+            gameInfo.WhiteBitBoard &= toRemoveBitboard;
+            gameInfo.FullBitBoard &= toRemoveBitboard;
         }
         else
         {
+            //remove the piece in all specific Boards
             gameInfo.BPawn &= toRemoveBitboard;
             gameInfo.BRook &= toRemoveBitboard;
             gameInfo.BKnight &= toRemoveBitboard;
             gameInfo.BBishop &= toRemoveBitboard;
             gameInfo.BQueen &= toRemoveBitboard;
             gameInfo.BKing &= toRemoveBitboard;
+            //remove the piece on the redundant Boards
+            gameInfo.BlackBitBoard &= toRemoveBitboard;
+            gameInfo.FullBitBoard &= toRemoveBitboard;
         }
     }
 
@@ -115,6 +121,9 @@ public static class MoveExecution
             (false, 'q') => gameInfo.BQueen ^= moveMask,
             _ => throw new ArgumentException()
         };
+        if (color) gameInfo.WhiteBitBoard ^= moveMask;
+        else gameInfo.BlackBitBoard ^= moveMask;
+        gameInfo.FullBitBoard ^= moveMask;
     }
 
     internal static void SpawnPiece(GameInfo gameInfo, char type, bool color, int index)
@@ -135,7 +144,13 @@ public static class MoveExecution
             (false, 'q') => gameInfo.BQueen |= spawnMask,
             (false, 'k') => gameInfo.BKing |= spawnMask,
             _ => throw new ArgumentException()
+
         };
+        
+        //Add the piece to the overview Boards
+        if (color) gameInfo.WhiteBitBoard |= spawnMask;
+        else gameInfo.BlackBitBoard |= spawnMask;
+        gameInfo.FullBitBoard |= spawnMask;
     }
     
 }
