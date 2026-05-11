@@ -16,8 +16,6 @@ public static class MoveExecution
             SpawnPiece(gameInfo, move.PromotionType.Value, move.MovingPlayer,move.TargetedField);
             return;
         }
-
-        if (IsEnPassant(gameInfo, move));
         
         if (IsRochade(gameInfo, move))
         {
@@ -43,10 +41,30 @@ public static class MoveExecution
             }
             return;
         }
+
+        if (IsEnPassant(gameInfo, move))
+        {
+            //delete the en passantable piece
+            if(move.MovingPlayer) gameInfo.BlackBitBoard ^= GeneralBitBoardHelper.BitBoardOnIndex(move.TargetedField+8);
+            else gameInfo.WhiteBitBoard ^= GeneralBitBoardHelper.BitBoardOnIndex(move.TargetedField-8);
+        };
+        
         //If there exists an enemy on the Square, it gets deleted, else nothing happens
         DeletePiece(gameInfo, !move.MovingPlayer, move.TargetedField);
         // deletes the piece at the prior location and create a new one at the new location
         MovePiece(gameInfo, move.MovingPieceType,move.MovingPlayer,move.OriginField,move.TargetedField);
+        
+        //generate the enpassantable board
+        if (move.MovingPieceType == 'b' && Math.Abs(move.TargetedField - move.OriginField) == 16)
+        {
+            gameInfo.EnPassantVulnerable =
+                GeneralBitBoardHelper.BitBoardOnIndex(Math.Min(move.TargetedField, move.OriginField) + 8);
+        }
+        else gameInfo.EnPassantVulnerable = 0;
+        
+        //romove form hasNotMoved if it has moved
+        if((gameInfo.HasNotMoved & GeneralBitBoardHelper.BitBoardOnIndex(move.OriginField))!=0)
+            gameInfo.HasNotMoved ^= GeneralBitBoardHelper.BitBoardOnIndex(move.OriginField);
     }
     
     private static bool IsRochade(GameInfo gameInfo, Move move)
@@ -68,10 +86,11 @@ public static class MoveExecution
     }
 
     private static bool IsEnPassant(GameInfo gameInfo, Move move)
-        /*TODO Implement usage of the IsEnpassantableBitboard -> this method, the if statement and write
-         the new Bitboard that will exist after the turn*/
+        //TODO There has to be an better way to do this. Pls do at some point
     {
-        return false;
+        return (
+            (GeneralBitBoardHelper.BitBoardOnIndex(move.TargetedField) & gameInfo.EnPassantVulnerable) == 0)&&
+               move.MovingPieceType=='b' && (GeneralBitBoardHelper.BitBoardOnIndex(move.OriginField)&gameInfo.HasNotMoved)==0;
     }
 
     private static void DeletePiece(GameInfo gameInfo, bool color, int index)

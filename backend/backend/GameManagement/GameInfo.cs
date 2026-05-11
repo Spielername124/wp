@@ -31,5 +31,6 @@ public class GameInfo
     public ulong BlackBitBoard { get; set; }
     public ulong WhiteBitBoard { get; set; }
     public ulong HasNotMoved { get; set; }
+    //Contains 1 on the position where a En passant can happen. NOT where the en passantable enemy is.
     public ulong EnPassantVulnerable {set;get;}
 }
