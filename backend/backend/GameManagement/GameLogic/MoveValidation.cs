@@ -17,9 +17,16 @@ public static class MoveValidation
              GeneralBitBoardHelper.GetColorsBoard(gameInfo, move.MovingPlayer)
             ) != 0
         ) return false;
-        // TODO: reject move if moving player is check after moving
-        
-        
+        //Safe pre-move game state for the case that 
+        GameInfo preMove = gameInfo.Clone();
+        //Execute the Move
+        MoveExecution.ExecuteMove(gameInfo, move);
+        //undo the execution and reject the move
+        if (CheckCheck.PerformCheckCheck(gameInfo, move.MovingPlayer))
+        {
+            gameInfo=preMove;
+            return false;
+        }
         return true;
     }
     

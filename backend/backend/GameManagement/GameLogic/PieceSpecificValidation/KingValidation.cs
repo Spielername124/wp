@@ -11,9 +11,9 @@ internal class KingValidation
 
     private static bool IsCastling(GameInfo gameInfo, int originField, int targetField,  bool color)
     {
+        if (CheckCheck.PerformCheckCheck(gameInfo, color)) return false;
         return (color, originField, targetField) switch
         { 
-            //TODO Check if the King is in Check and refuse the castling if it s.
             /*
              In every case
              we check if the LOS exists by XOR-ing the Board with the Precalculated LOS. It is 0 if the LOS is existing
