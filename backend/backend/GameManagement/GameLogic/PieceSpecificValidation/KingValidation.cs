@@ -4,7 +4,7 @@ internal class KingValidation
 {
     internal static bool ValidateKing(GameInfo gameInfo, int originField, int targetField,bool color)
     {
-        return ((BitBoardPreCalculation.KingMovementBitBoardArray[originField] &
+        return ((BitBoardPreCalculation.SurroundingBitBoardArray[originField] &
                  GeneralBitBoardHelper.BitBoardOnIndex(targetField)) != 0) 
                || IsCastling(gameInfo, originField, targetField, color);
     }
