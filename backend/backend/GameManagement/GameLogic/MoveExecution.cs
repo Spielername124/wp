@@ -62,7 +62,7 @@ public static class MoveExecution
         }
         else gameInfo.EnPassantVulnerable = 0;
         
-        //romove form hasNotMoved if it has moved
+        //remove form hasNotMoved if it has moved
         if((gameInfo.HasNotMoved & GeneralBitBoardHelper.BitBoardOnIndex(move.OriginField))!=0)
             gameInfo.HasNotMoved ^= GeneralBitBoardHelper.BitBoardOnIndex(move.OriginField);
     }

@@ -11,7 +11,6 @@ internal class KingValidation
 
     private static bool IsCastling(GameInfo gameInfo, int originField, int targetField,  bool color)
     {
-        //TODO implement hasNotMovedYet board in gameInfo
         return (color, originField, targetField) switch
         { 
             //TODO Check if the King is in Check and refuse the castling if it s.

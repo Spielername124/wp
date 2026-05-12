@@ -17,23 +17,22 @@ internal static class PawnValidation
             int offset = targetField - originField;
             return (color, offset) switch
             {
-                //TODO While rewriting this, prevent out of loop overs.
                 (true, 8) => true,
                 (true, 16) 
-                    => ValidationHelper.IsValidVerticalMove(gameinfo, originField, targetField) && PawnHasNotMovedYet(gameinfo, originField, color),
+                    => ValidationHelper.IsValidVerticalMove(gameinfo, originField, targetField) && 
+                       (gameinfo.HasNotMoved&GeneralBitBoardHelper.BitBoardOnIndex(originField)) !=0,
                 (false, -8) => true,
                 (false, -16) 
-                    => ValidationHelper.IsValidVerticalMove(gameinfo, originField, targetField) && PawnHasNotMovedYet(gameinfo, originField, color),
+                    => ValidationHelper.IsValidVerticalMove(gameinfo, originField, targetField) &&
+                       (gameinfo.HasNotMoved&GeneralBitBoardHelper.BitBoardOnIndex(originField)) !=0,
                 _ => false
             };
         }
         //Diagonal moves
         else
         {
-            //TODO add Bitboard to GameInfo which contains TargetIndexes that are en passantable. 
-            ulong mockEnPassantableTable = 0;
-            ulong enemyTable = mockEnPassantableTable | GeneralBitBoardHelper.GetColorsBoard(gameinfo, !color);
-            
+            ulong enemyTable = gameinfo.EnPassantVulnerable | GeneralBitBoardHelper.GetColorsBoard(gameinfo, !color);
+            //TODO While rewriting this, prevent out of loop overs. (this is not a correct method here either)
             int offset = targetField- originField;
             
             //rejects move if the pawn does not move in the horizontally right direction, or it doesn't move correctly diagonal
@@ -45,14 +44,6 @@ internal static class PawnValidation
             return ((enemyTable & GeneralBitBoardHelper.BitBoardOnIndex(targetField)) != 0);
         }
     }
-
-    internal static bool PawnHasNotMovedYet(GameInfo gameInfo, int originField, bool color)
-    {
-        return (color) switch
-        {
-            (true) => (GeneralBitBoardHelper.BitBoardOnIndex(originField)& gameInfo.WPawn) != 0,
-            (false) => (GeneralBitBoardHelper.BitBoardOnIndex(originField) & gameInfo.BPawn) != 0
-        };
-    }
+    
     
 }
