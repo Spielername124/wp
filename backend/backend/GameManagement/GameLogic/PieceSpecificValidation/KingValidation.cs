@@ -12,10 +12,8 @@ internal class KingValidation
     private static bool IsCastling(GameInfo gameInfo, int originField, int targetField,  bool color)
     {
         //TODO implement hasNotMovedYet board in gameInfo
-        ulong mockHasNotMoved = 0;
         return (color, originField, targetField) switch
         { 
-            
             //TODO Check if the King is in Check and refuse the castling if it s.
             /*
              In every case
@@ -26,16 +24,16 @@ internal class KingValidation
              */
             
             (true, 4, 2) => 
-                ((mockHasNotMoved ^ GeneralBitBoardHelper.BitBoardOnIndex(0)) |
+                ((gameInfo.HasNotMoved ^ GeneralBitBoardHelper.BitBoardOnIndex(0)) |
                (gameInfo.FullBitBoard & BitBoardPreCalculation.LOSBitboardArray[4,0]))==0,
             (true, 4, 6) => 
-                ((mockHasNotMoved & GeneralBitBoardHelper.BitBoardOnIndex(7)) |
+                ((gameInfo.HasNotMoved & GeneralBitBoardHelper.BitBoardOnIndex(7)) |
                 (gameInfo.FullBitBoard& BitBoardPreCalculation.LOSBitboardArray[4,7]))==0,
             (false, 60, 58) => 
-                ((mockHasNotMoved & GeneralBitBoardHelper.BitBoardOnIndex(56)) |
+                ((gameInfo.HasNotMoved & GeneralBitBoardHelper.BitBoardOnIndex(56)) |
                  (gameInfo.FullBitBoard& BitBoardPreCalculation.LOSBitboardArray[60,56]))==0,
             (false, 60, 62) => 
-                ((mockHasNotMoved & GeneralBitBoardHelper.BitBoardOnIndex(63)) |
+                ((gameInfo.HasNotMoved & GeneralBitBoardHelper.BitBoardOnIndex(63)) |
                 (gameInfo.FullBitBoard& BitBoardPreCalculation.LOSBitboardArray[60,63]))==0,
             _ => false,
         };

@@ -17,7 +17,7 @@ public static class MoveExecution
             return;
         }
         
-        if (IsRochade(gameInfo, move))
+        if (IsCasteling(gameInfo, move))
         {
             switch (move.MovingPlayer, move.TargetedField)
             {
@@ -67,10 +67,9 @@ public static class MoveExecution
             gameInfo.HasNotMoved ^= GeneralBitBoardHelper.BitBoardOnIndex(move.OriginField);
     }
     
-    private static bool IsRochade(GameInfo gameInfo, Move move)
+    private static bool IsCasteling(GameInfo gameInfo, Move move)
     {
-        //TODO
-        return false;
+        return (Math.Abs(move.OriginField - move.TargetedField)>1);
     }
     
     private static bool IsPawnPromotion( bool color, int index)
