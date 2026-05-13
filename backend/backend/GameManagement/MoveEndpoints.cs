@@ -22,9 +22,10 @@ public static class MoveEndpoints
         if (gameState == null) return TypedResults.NotFound();
         if (MoveValidation.ValidateMove(move, gameState))
         {
+            //TODO Handle result
+            int result = GameEndingCheck.CheckGameEnding(gameState, !move.MovingPlayer);
             
             //TODO: write the gamestate to the db
-            //TODO: Check if the game ends (Check mate/ Remis) and give acording response (including draw by repeated moves)
             return TypedResults.Ok();
         }
         
