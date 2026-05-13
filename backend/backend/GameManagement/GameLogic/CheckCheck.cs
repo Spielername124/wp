@@ -2,6 +2,7 @@
 using System.Numerics;
 internal class CheckCheck
 {
+    //We use a struct to give along important iformations for further calculations
     /*
      The concept used in this function is to use the King as A super piece that can do all possible attack moves.
      if the King is able to capture an enemy piece that is able to do the used move, he is in check.
@@ -86,39 +87,45 @@ internal class CheckCheck
             gameInfo.BQueen | gameInfo.BBishop: 
             gameInfo.WQueen | gameInfo.WBishop;
 
-        
-        //Northeast
-        ulong directionalThreatNortheast = threatArray[4];
-        ulong piecesOnThreatLineNortheast = directionalThreatNortheast & fullBoard;
-        ulong threatsOnThreatLineNortheast = directionalThreatNortheast & diagonalThreat;
-        if (threatsOnThreatLineNortheast != 0 &&
-            BitOperations.TrailingZeroCount(piecesOnThreatLineNortheast) == BitOperations.TrailingZeroCount(threatsOnThreatLineNortheast))
-            return true;
-        
-        //Southwest
-        ulong directionalThreatSouthwest = threatArray[5];
-        ulong piecesOnThreatLineSouthwest = directionalThreatSouthwest & fullBoard;
-        ulong threatsOnThreatLineSouthwest = directionalThreatSouthwest & diagonalThreat;
-        if (threatsOnThreatLineSouthwest != 0 &&
-            BitOperations.LeadingZeroCount(piecesOnThreatLineSouthwest) == BitOperations.LeadingZeroCount(threatsOnThreatLineSouthwest))
-            return true;
+        if ((threatArray[9] & diagonalThreat) != 0)
+        {
+            //Northeast
+            ulong directionalThreatNortheast = threatArray[4];
+            ulong piecesOnThreatLineNortheast = directionalThreatNortheast & fullBoard;
+            ulong threatsOnThreatLineNortheast = directionalThreatNortheast & diagonalThreat;
+            if (threatsOnThreatLineNortheast != 0 &&
+                BitOperations.TrailingZeroCount(piecesOnThreatLineNortheast) ==
+                BitOperations.TrailingZeroCount(threatsOnThreatLineNortheast))
+                return true;
 
-        //Southeast
-        ulong directionalThreatSoutheast = threatArray[6];
-        ulong piecesOnThreatLineSoutheast = directionalThreatSoutheast & fullBoard;
-        ulong threatsOnThreatLineSoutheast = directionalThreatSoutheast & diagonalThreat;
-        if (threatsOnThreatLineSoutheast != 0 &&
-            BitOperations.LeadingZeroCount(piecesOnThreatLineSoutheast) == BitOperations.LeadingZeroCount(threatsOnThreatLineSoutheast))
-            return true;
+            //Southwest
+            ulong directionalThreatSouthwest = threatArray[5];
+            ulong piecesOnThreatLineSouthwest = directionalThreatSouthwest & fullBoard;
+            ulong threatsOnThreatLineSouthwest = directionalThreatSouthwest & diagonalThreat;
+            if (threatsOnThreatLineSouthwest != 0 &&
+                BitOperations.LeadingZeroCount(piecesOnThreatLineSouthwest) ==
+                BitOperations.LeadingZeroCount(threatsOnThreatLineSouthwest))
+                return true;
 
-        //Northwest
-        ulong directionalThreatNorthwest = threatArray[7];
-        ulong piecesOnThreatLineNorthwest = directionalThreatNorthwest & fullBoard;
-        ulong threatsOnThreatLineNorthwest = directionalThreatNorthwest & diagonalThreat;
-        if (threatsOnThreatLineNorthwest != 0 &&
-            BitOperations.TrailingZeroCount(piecesOnThreatLineNorthwest) == BitOperations.TrailingZeroCount(threatsOnThreatLineNorthwest))
-            return true;
-        
+            //Southeast
+            ulong directionalThreatSoutheast = threatArray[6];
+            ulong piecesOnThreatLineSoutheast = directionalThreatSoutheast & fullBoard;
+            ulong threatsOnThreatLineSoutheast = directionalThreatSoutheast & diagonalThreat;
+            if (threatsOnThreatLineSoutheast != 0 &&
+                BitOperations.LeadingZeroCount(piecesOnThreatLineSoutheast) ==
+                BitOperations.LeadingZeroCount(threatsOnThreatLineSoutheast))
+                return true;
+
+            //Northwest
+            ulong directionalThreatNorthwest = threatArray[7];
+            ulong piecesOnThreatLineNorthwest = directionalThreatNorthwest & fullBoard;
+            ulong threatsOnThreatLineNorthwest = directionalThreatNorthwest & diagonalThreat;
+            if (threatsOnThreatLineNorthwest != 0 &&
+                BitOperations.TrailingZeroCount(piecesOnThreatLineNorthwest) ==
+                BitOperations.TrailingZeroCount(threatsOnThreatLineNorthwest))
+                return true;
+        }
+
         //No Threats detected --> King is not in Check
         return false;
     }
