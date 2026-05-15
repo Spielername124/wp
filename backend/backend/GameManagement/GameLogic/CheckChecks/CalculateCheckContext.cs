@@ -2,7 +2,7 @@
 
 namespace backend.GameManagement.GameLogic;
 
-public class CalculateCheckContext
+public static class CalculateCheckContext
 {
     
     //We use a struct to give along important information for further calculations

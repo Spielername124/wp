@@ -1,4 +1,7 @@
-﻿namespace backend.GameManagement.GameLogic.PieceSpecificValidation;
+﻿using System.Numerics;
+using backend.GameManagement.GameLogic.CheckChecks;
+
+namespace backend.GameManagement.GameLogic.PieceSpecificValidation;
 
 internal class KingValidation
 {
@@ -11,7 +14,10 @@ internal class KingValidation
 
     private static bool IsCastling(GameInfo gameInfo, int originField, int targetField,  bool color)
     {
-        if (CheckCheck.PerformCheckCheck(gameInfo, color)) return false;
+        int kingPos = color?
+            BitOperations.TrailingZeroCount(gameInfo.WKing) :
+            BitOperations.TrailingZeroCount(gameInfo.BKing);
+        if (CheckCheck.PerformCheckCheck(gameInfo, color, kingPos)) return false;
         return (color, originField, targetField) switch
         { 
             /*

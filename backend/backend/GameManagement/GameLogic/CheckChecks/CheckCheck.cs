@@ -1,6 +1,8 @@
-﻿namespace backend.GameManagement.GameLogic;
-using System.Numerics;
-internal class CheckCheck
+﻿using System.Numerics;
+
+namespace backend.GameManagement.GameLogic.CheckChecks;
+
+internal static class CheckCheck
 {
     //We use a struct to give along important iformations for further calculations
     /*
@@ -13,16 +15,14 @@ internal class CheckCheck
     //Threat Board: Only add Pawns/Kings to the threat boards if they are really threatening --> Save special checks
     
     //This check must happen: on the old gameState, if we check the check bevor the move, and otherwise after all pieces moved.
-    internal static bool PerformCheckCheck(GameInfo gameInfo, bool color)
+    internal static bool PerformCheckCheck(GameInfo gameInfo, bool color, int kingPos)
     {
-        //convert the Position of the King into an integer allowing us to use the following Arrays properly
-        int kingPos = color?
-            BitOperations.TrailingZeroCount(gameInfo.WKing) :
-            BitOperations.TrailingZeroCount(gameInfo.BKing);
+        //convert the Position of the King into an ulong
+        ulong kingBoard = 1UL << kingPos;
         
         //Checks if there exists a Knight wich threatens the King 
-        ulong LThreat= color ? gameInfo.BKnight : gameInfo.WKnight;
-        if ((LThreat & BitBoardPreCalculation.ThreadByKnightArray[kingPos]) != 0) return true;
+        ulong lThreat= color ? gameInfo.BKnight : gameInfo.WKnight;
+        if ((lThreat & BitBoardPreCalculation.ThreadByKnightArray[kingPos]) != 0) return true;
         
         ulong threateningKingsAndPawns = color ? 
                 (gameInfo.BPawn & BitBoardPreCalculation.ThreadByBlackPawnsArray[kingPos]) |
@@ -35,12 +35,15 @@ internal class CheckCheck
         /* little reminder: Direction = 0 - 7, 0 = north, 1 = south, 2 = east, 3 = west, 4 = northeast,
         5 = southwest, 6 = southeast, 7= northwest, 8 = straight line, 9 = diagonal line*/
         
-        //Caching the full Board
-        ulong fullBoard=gameInfo.FullBitBoard;
+        /*Caching the full Board except the king. Removing the King allows us to check pseudo legal
+         moves since there is no king blocking --> we don't need to do/undo king moves */
+        ulong fullBoard=gameInfo.FullBitBoard ^= kingBoard;
         
         ulong straightThreat = color ?
             gameInfo.BQueen | gameInfo.BRook:
             gameInfo.WQueen | gameInfo.WRook;
+        // This removes a potential Threat that the king may capture during a pseudo legal move CheckCheck
+        straightThreat ^=kingBoard;
         ulong[] threatArray= BitBoardPreCalculation.CheckThreatLineArray[kingPos];
         
         if((threatArray[8]&straightThreat) != 0){
@@ -86,6 +89,8 @@ internal class CheckCheck
         ulong diagonalThreat = color ?
             gameInfo.BQueen | gameInfo.BBishop: 
             gameInfo.WQueen | gameInfo.WBishop;
+        // This removes a potential Threat that the king may capture during a pseudo legal move CheckCheck
+        diagonalThreat ^=kingBoard;
 
         if ((threatArray[9] & diagonalThreat) != 0)
         {

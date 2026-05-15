@@ -1,4 +1,6 @@
 ﻿using System.Data;
+using System.Numerics;
+using backend.GameManagement.GameLogic.CheckChecks;
 
 namespace backend.GameManagement.GameLogic;
 
@@ -22,7 +24,10 @@ public static class MoveValidation
         //Execute the Move
         MoveExecution.ExecuteMove(gameInfo, move);
         //undo the execution and reject the move
-        if (CheckCheck.PerformCheckCheck(gameInfo, move.MovingPlayer))
+        int kingPos = move.MovingPlayer?
+            BitOperations.TrailingZeroCount(gameInfo.WKing) :
+            BitOperations.TrailingZeroCount(gameInfo.BKing);
+        if (CheckCheck.PerformCheckCheck(gameInfo, move.MovingPlayer, kingPos))
         {
             gameInfo=preMove;
             return false;
